@@ -1,0 +1,77 @@
+global
+    log 127.0.0.1 local2
+    chroot      /var/lib/haproxy
+    pidfile     /var/run/haproxy.pid
+    maxconn     4096
+    user        haproxy
+    group       haproxy
+    daemon
+    stats socket /var/lib/haproxy/stats
+    
+defaults
+    log global
+    mode tcp
+    option tcplog
+    option dontlognull
+    retries 3
+    option redispatch
+    maxconn 2000
+    contimeout 5000
+    clitimeout 50000
+    srvtimeout 50000
+
+listen galera-cluster
+        bind {{ VIP_HOSTNAME }}:3306
+        balance  source
+        server {{ NODE_1 }} {{ NODE_1 }}:3306 check port 4567 inter 2000 rise 2 fall 5
+        server {{ NODE_2 }} {{ NODE_2 }}:3306 check port 4567 inter 2000 rise 2 fall 5 backup 
+
+listen mongodb-cluster
+        bind {{ VIP_HOSTNAME }}:27017
+        balance  source
+        server {{ NODE_1 }} {{ NODE_1 }}:27017 check inter 2000 rise 2 fall 5
+        server {{ NODE_2 }} {{ NODE_2 }}:27017 check inter 2000 rise 2 fall 5 backup
+
+listen rabbitmq
+	bind	{{ VIP_HOSTNAME }}:5673
+	balance source
+	mode 	tcp
+	server 	{{ NODE_1 }} {{ NODE_1 }}:5672 check inter 2000 rise 2 fall 3
+	server 	{{ NODE_2 }} {{ NODE_2 }}:5672 check inter 2000 rise 2 fall 3
+
+listen memcache
+	bind	{{ VIP_HOSTNAME }}:11211
+	balance source
+	mode 	tcp
+	server 	{{ NODE_1 }} {{ NODE_1 }}:11211 check inter 2000 rise 2 fall 3
+	server 	{{ NODE_2 }} {{ NODE_2 }}:11211 check inter 2000 rise 2 fall 3 backup
+
+listen keystone_admin_cluster
+        bind {{ VIP_HOSTNAME }}:35357
+        balance  source
+        option  tcpka
+        option  httpchk
+        option  tcplog
+        server {{ NODE_1 }} {{ NODE_1 }}:35357 check inter 2000 rise 2 fall 5
+        server {{ NODE_2 }} {{ NODE_2 }}:35357 check inter 2000 rise 2 fall 5 backup
+
+listen keystone_public_internal_cluster
+        bind {{ VIP_HOSTNAME }}:5000
+        balance  source
+        option  tcpka
+        option  httpchk
+        option  tcplog
+        server {{ NODE_1 }} {{ NODE_1 }}:5000 check inter 2000 rise 2 fall 5
+        server {{ NODE_2 }} {{ NODE_2 }}:5000 check inter 2000 rise 2 fall 5 backup
+
+
+listen stats
+	mode 		http
+	bind 		0.0.0.0:8080
+	stats		enable	
+	stats 		refresh 30
+	stats 		hide-version
+	stats 		uri 		/haproxy_stats
+	stats 		realm 	   	Haproxy\ Status
+	stats 		auth		admin:admin
+	stats 		admin		if TRUE	

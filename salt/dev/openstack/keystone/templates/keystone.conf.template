@@ -1,0 +1,21 @@
+[DEFAULT]
+admin_token = {{ADMIN_TOKEN}}
+bind_host = {{IPADDR}}
+admin_workers = 4
+public_workers = 4 
+[database]
+connection = mysql://{{MYSQL_KEYSTONE_USER}}:{{MYSQL_KEYSTONE_PASS}}@{{VIP}}/{{MYSQL_KEYSTONE_DBNAME}}
+max_pool_size=10
+max_retries=-1
+max_overflow=20
+[cache]
+enabled = true
+expiration_time = 600
+backend=dogpile.cache.memcached
+memcache_servers = {{VIP}}:11211
+[token]
+caching = true
+#provider = keystone.token.providers.pki.Provider
+driver = keystone.token.persistence.backends.memcache.Token 
+[memcache]
+servers = {{VIP}}:11211

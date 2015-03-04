@@ -1,0 +1,6 @@
+[DEFAULT]
+interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
+ovs_use_veth = True
+device_driver = neutron.services.loadbalancer.drivers.haproxy.namespace_driver.HaproxyNSDriver
+[haproxy]
+user_group = nobody

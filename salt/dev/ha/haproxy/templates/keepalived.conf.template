@@ -1,0 +1,29 @@
+! Configuration File for keepalived
+
+vrrp_script chk_haproxy {
+    script "killall -0 haproxy"
+    interval 2
+    weight 2
+}
+
+vrrp_instance VI_1 {
+    interface {{ MANAGE_INTERFACE }} 
+    virtual_router_id 51
+{% if grains['host'] == salt['pillar.get']('corosync:NODE_1') %}
+    state MASTER
+    priority 101
+{% elif grains['host'] == salt['pillar.get']('corosync:NODE_2') %}
+    state BACKUP
+    priority 100
+{% endif %}
+    authentication {
+    auth_type PASS
+    auth_pass password
+    }
+    virtual_ipaddress {
+       {{ VIP }} 
+    }
+    track_script {
+      chk_haproxy
+    }
+}

@@ -1,0 +1,88 @@
+---
+# token is the admin_token in keystone.conf
+token:   {{ ADMIN_TOKEN }} 
+endpoint: http://{{ NODE_1 }}:35357/v2.0
+
+default tenant:
+    name:        admin
+    description: Default Tenant
+
+# This is the admin user
+default user:
+    name:    {{ ADMIN_USER }} 
+    password: {{ ADMIN_PASS }}
+
+# See: http://docs.openstack.org/essex/openstack-compute/install/content/setting-up-tenants-users-and-roles.html
+service users:
+    - name:     {{ AUTH_ADMIN_GLANCE_USER }}
+      password: {{ AUTH_ADMIN_GLANCE_PASS }}
+
+    - name:     {{ AUTH_ADMIN_NOVA_USER }}
+      password: {{ AUTH_ADMIN_NOVA_PASS }}
+
+    - name:     {{ AUTH_ADMIN_NEUTRON_USER }}
+      password: {{ AUTH_ADMIN_NEUTRON_PASS }}
+    
+    - name:     {{ AUTH_ADMIN_CINDER_USER }}
+      password: {{ AUTH_ADMIN_CINDER_PASS }}
+                     
+    - name:     {{ AUTH_ADMIN_CEILOMETER_USER }}
+      password: {{ AUTH_ADMIN_CEILOMETER_PASS }}
+
+# See: http://docs.openstack.org/essex/openstack-compute/install/content/keystone-service-endpoint-create.html
+services and endpoints:
+    - name:         keystone
+      type:         identity
+      description:  Keystone Identity Service
+      region:       regionOne
+      publicurl:    http://{{ IPADDR }}:5000/v2.0
+      internalurl:  http://{{ IPADDR }}:5000/v2.0
+      adminurl:     http://{{ IPADDR }}:35357/v2.0
+
+    - name:         nova
+      type:         compute
+      description:  Nova Compute Service
+      region:       regionOne
+      publicurl:    http://{{ IPADDR }}:8774/v2/%(tenant_id)s
+      internalurl:  http://{{ IPADDR }}:8774/v2/%(tenant_id)s
+      adminurl:     http://{{ IPADDR }}:8774/v2/%(tenant_id)s
+
+    - name:         cinder
+      type:         volume
+      description:  cinder Volume Service
+      region:       regionOne
+      publicurl:    http://{{ IPADDR }}:8776/v1/%(tenant_id)s
+      internalurl:  http://{{ IPADDR }}:8776/v1/%(tenant_id)s
+      adminurl:     http://{{ IPADDR }}:8776/v1/%(tenant_id)s
+
+    - name:         cinderv2
+      type:         volumev2
+      description:  cinder Volume Service
+      region:       regionOne
+      publicurl:    http://{{ IPADDR }}:8776/v2/%(tenant_id)s
+      internalurl:  http://{{ IPADDR }}:8776/v2/%(tenant_id)s
+      adminurl:     http://{{ IPADDR }}:8776/v2/%(tenant_id)s
+
+    - name:         glance
+      type:         image
+      description:  Glance Image Service
+      region:       regionOne
+      publicurl:    http://{{ IPADDR }}:9292
+      internalurl:  http://{{ IPADDR }}:9292
+      adminurl:     http://{{ IPADDR }}:9292
+
+    - name:         neutron
+      type:         network
+      description:  Neutron Network Service
+      region:       regionOne
+      publicurl:    http://{{ IPADDR }}:9696
+      internalurl:  http://{{ IPADDR }}:9696
+      adminurl:     http://{{ IPADDR }}:9696
+
+    - name:         ceilometer
+      type:         metering
+      description:  Telemetry Service
+      region:       regionOne
+      publicurl:    http://{{ IPADDR }}:8777
+      internalurl:  http://{{ IPADDR }}:8777
+      adminurl:     http://{{ IPADDR }}:8777

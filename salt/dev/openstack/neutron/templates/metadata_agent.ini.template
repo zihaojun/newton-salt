@@ -1,0 +1,9 @@
+[DEFAULT]
+auth_url = http://{{VIP}}:35357/v2.0
+auth_region = regionOne
+admin_tenant_name = service
+admin_user = {{AUTH_ADMIN_NEUTRON_USER}}
+admin_password = {{AUTH_ADMIN_NEUTRON_PASS}}
+nova_metadata_ip = {{IPADDR}}
+metadata_proxy_shared_secret = {{METADATA_PROXY_SECRET}}
+metadata_workers = 2

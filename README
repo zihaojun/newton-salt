@@ -1,0 +1,160 @@
+# 代码结构
+.
+├── pillar                  # 系统变量
+│   ├── ha                  # ha系统变量
+│   │   ├── corosync.sls    # corosync相关变量
+│   │   ├── haproxy.sls     # haproxy相关变量
+│   │   ├── keepalived.sls  # keepalived相关变量
+│   │   ├── mariadb.sls     # mariadb相关变量 
+│   │   ├── mongodb.sls     # mongodb相关变量 
+│   │   ├── pacemaker.sls   # pacemaker相关变量 
+│   │   └── rabbitmq.sls    # rabbitmq相关变量 
+│   ├── openstack           # openstack系统变量
+│   │   ├── ceilometer.sls  # ceilometer相关变量 
+│   │   ├── cinder.sls      # cinder相关变量 
+│   │   ├── glance.sls      # glance相关变量 
+│   │   ├── keystone.sls    # keystone相关变量 
+│   │   ├── neutron.sls     # neutron相关变量 
+│   │   └── nova.sls        # nova相关变量
+│   └── top.sls             # 系统变量的入口文件
+└── salt                    # 模块代码  
+    ├── deploy.py           # 调用salt-api
+    ├── dev              
+    │   ├── ha              # ha模块代码
+    │   │   ├── corosync    # corosync模块代码
+    │   │   │   ├── cluster
+    │   │   │   │   ├── add.sls
+    │   │   │   │   └── init.sls
+    │   │   │   ├── files
+    │   │   │   │   ├── add_resource.sh
+    │   │   │   │   ├── authkey
+    │   │   │   │   ├── authorized_keys
+    │   │   │   │   └── id_rsa
+    │   │   │   ├── init.sls
+    │   │   │   └── templates
+    │   │   │       └── corosync.conf.template
+    │   │   ├── haproxy     # haproxy模块代码
+    │   │   │   ├── cluster
+    │   │   │   │   └── add.sls
+    │   │   │   ├── files
+    │   │   │   │   ├── add_resource.sh
+    │   │   │   │   ├── haproxy.conf
+    │   │   │   │   └── rsyslog
+    │   │   │   ├── init.sls
+    │   │   │   ├── keepalived.sls
+    │   │   │   ├── rsyslog.sls
+    │   │   │   ├── service.sls
+    │   │   │   └── templates
+    │   │   │       ├── haproxy.cfg.template
+    │   │   │       └── keepalived.conf.template
+    │   │   ├── mariadb     # mariadb模块代码
+    │   │   │   ├── cluster
+    │   │   │   │   ├── add.sls
+    │   │   │   │   └── init.sls
+    │   │   │   ├── init.sls
+    │   │   │   └── templates
+    │   │   │       └── my.cnf.template
+    │   │   ├── memcache    # memcache模块代码
+    │   │   │   ├── files
+    │   │   │   │   └── memcached.service
+    │   │   │   ├── init.sls
+    │   │   │   └── templates
+    │   │   │       └── memcached.template
+    │   │   ├── mongodb     # mongodb模块代码
+    │   │   │   ├── cluster
+    │   │   │   │   ├── add.sls
+    │   │   │   │   └── init.sls
+    │   │   │   ├── init.sls
+    │   │   │   └── templates
+    │   │   │       └── mongodb.conf.template
+    │   │   ├── ntp         # ntp模块代码
+    │   │   │   ├── cluster
+    │   │   │   │   ├── master.sls
+    │   │   │   │   └── slave.sls
+    │   │   │   ├── init.sls
+    │   │   │   └── templates
+    │   │   │       └── ntp.conf.template
+    │   │   └── rabbitmq    # rabbitmq模块代码
+    │   │       ├── cluster
+    │   │       │   ├── init.sls
+    │   │       │   └── policy.sls
+    │   │       ├── files
+    │   │       └── init.sls
+    │   ├── ha-corosync-pacemaker.sls  # corosync模块代码入口
+    │   ├── ha-haproxy-keepalived.sls  # haproxy模块代码入口
+    │   ├── ha-mariadb.sls             # mariadb模块代码入口
+    │   ├── ha-memcache.sls            # memcache模块代码入口
+    │   ├── ha-mongodb.sls             # mongodb模块代码入口
+    │   ├── ha-ntp.sls                 # ntp模块代码入口 
+    │   ├── ha-rabbitmq.sls            # rabbitmq模块代码入口
+    │   ├── openstack                  # openstack组件模块代码
+    │   │   ├── ceilometer             # ceilometer模块代码
+    │   │   │   ├── db.sls
+    │   │   │   ├── files
+    │   │   │   │   └── ceilometer_mongodb_user.sh
+    │   │   │   ├── init.sls
+    │   │   │   ├── service.sls
+    │   │   │   └── templates
+    │   │   │       ├── ceilometer.conf.controller.template
+    │   │   │       └── snmpd.conf.template
+    │   │   ├── cinder                 # cinder模块代码 
+    │   │   │   ├── db.sls
+    │   │   │   ├── init.sls
+    │   │   │   ├── service.sls
+    │   │   │   └── templates
+    │   │   │       ├── cinder.conf.template
+    │   │   │       └── glusterfs_shares.template
+    │   │   ├── glance                 # glance模块代码
+    │   │   │   ├── db.sls
+    │   │   │   ├── init.sls
+    │   │   │   ├── service.sls
+    │   │   │   └── templates
+    │   │   │       ├── glance-api.conf.template
+    │   │   │       └── glance-registry.conf.template
+    │   │   ├── horizon                # horizon模块代码
+    │   │   │   ├── files
+    │   │   │   │   └── openstack-dashboard.conf
+    │   │   │   ├── init.sls
+    │   │   │   ├── openstack-haproxy.sls
+    │   │   │   └── templates
+    │   │   │       ├── haproxy.cfg.template
+    │   │   │       └── local_settings.template
+    │   │   ├── keystone               # keystone模块代码
+    │   │   │   ├── db.sls
+    │   │   │   ├── files
+    │   │   │   │   └── keystone-init.py
+    │   │   │   ├── init.sls
+    │   │   │   ├── keystone-haproxy.sls
+    │   │   │   ├── service.sls
+    │   │   │   ├── templates
+    │   │   │   │   ├── config.yaml.template
+    │   │   │   │   ├── haproxy.cfg.template
+    │   │   │   │   ├── keystone.conf.template
+    │   │   │   │   └── keystonerc.template
+    │   │   │   └── user-role-tenant.sls
+    │   │   ├── neutron                # neutron模块代码
+    │   │   │   ├── db.sls
+    │   │   │   ├── init.sls
+    │   │   │   ├── service.sls
+    │   │   │   └── templates
+    │   │   │       ├── dhcp_agent.ini.template
+    │   │   │       ├── fwaas_driver.ini.template
+    │   │   │       ├── l3_agent.ini.template
+    │   │   │       ├── lbaas_agent.ini.template
+    │   │   │       ├── metadata_agent.ini.template
+    │   │   │       ├── ml2_conf.ini.template
+    │   │   │       └── neutron.conf.controller.template
+    │   │   └── nova                   # nova模块代码
+    │   │       ├── db.sls
+    │   │       ├── init.sls
+    │   │       ├── service.sls
+    │   │       └── templates
+    │   │           └── nova.conf.controller.template
+    │   ├── openstack-ceilometer.sls   # ceilometer模块代码入口
+    │   ├── openstack-cinder.sls       # cinder模块代码入口
+    │   ├── openstack-glance.sls       # glance模块代码入口
+    │   ├── openstack-ha.sls           # 所有模块代码的入口
+    │   ├── openstack-horizon.sls      # horizon模块代码入口
+    │   ├── openstack-keystone.sls     # keystone模块代码入口
+    │   ├── openstack-neutron.sls      # neutron模块代码入口
+    │   └── openstack-nova.sls         # nova模块代码入口

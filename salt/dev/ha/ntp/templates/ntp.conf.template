@@ -1,0 +1,17 @@
+driftfile /var/lib/ntp/drift
+restrict -4 default kod nomodify notrap 
+restrict -6 default kod nomodify notrap 
+restrict 127.0.0.1
+{% if MASTER_ENABLED -%}
+server 202.120.2.100 prefer
+{% else %}
+server {{ MASTER }} prefer
+{% endif %}
+server 127.127.1.0
+includefile /etc/ntp/crypto/pw
+keys /etc/ntp/keys
+{% if MASTER_ENABLED -%}
+fudge 127.127.1.0 stratum 0
+{% else %}
+fudge 127.127.1.0 stratum 2
+{% endif %}

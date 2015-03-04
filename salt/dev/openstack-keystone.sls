@@ -1,0 +1,40 @@
+keystone-init:
+   salt.state:
+       - tgt: {{ salt['pillar.get']('corosync:NODES') }}
+       - tgt_type: list
+       - sls:
+         - dev.openstack.keystone
+
+keystone-db-init:
+   salt.state:
+       - tgt: {{ salt['pillar.get']('mariadb:MASTER') }}
+       - sls:
+         - dev.openstack.keystone.db
+       - require:
+         - salt: keystone-init
+
+keystone-service:
+   salt.state:
+       - tgt: {{ salt['pillar.get']('corosync:NODES') }}
+       - tgt_type: list
+       - sls:
+         - dev.openstack.keystone.service
+       - require:
+         - salt: keystone-db-init
+
+keystone-user-role-tenant-init:
+   salt.state:
+       - tgt: {{ salt['pillar.get']('corosync:NODE_1') }}
+       - sls:
+         - dev.openstack.keystone.user-role-tenant
+       - require:
+         - salt: keystone-service
+
+keystone-add-haproxy:
+   salt.state:
+       - tgt: {{ salt['pillar.get']('corosync:NODES') }}
+       - tgt_type: list
+       - sls:
+         - dev.openstack.keystone.keystone-haproxy
+       - require:
+         - salt: keystone-service 

@@ -1,0 +1,13 @@
+bind_ip = {{ HOSTNAME }}
+port = 27017
+fork = true
+pidfilepath = /var/run/mongodb/mongod.pid
+logpath = /var/log/mongodb/mongodb.log
+dbpath =/var/lib/mongodb
+journal = true
+{% if MASTER_ENABLED %}
+master = true
+{% else %}
+slave = true
+source = {{ MASTER }}:27017
+{% endif %}
