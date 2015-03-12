@@ -5,4 +5,5 @@ keystone:
     ADMIN_TOKEN: admin_token
     ADMIN_USER: admin
     ADMIN_PASS: admin
-    AUTH_KEYSTONE_PROTOCOL: http
+
+keystone.token: 'admin_token'

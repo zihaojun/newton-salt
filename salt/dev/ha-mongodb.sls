@@ -1,13 +1,15 @@
 mongodb-init:
     salt.state:
-       - tgt: {{ salt['pillar.get']('corosync:NODES') }}
+       - tgt: {{ salt['pillar.get']('basic:corosync:NODES') }}
        - tgt_type: list
        - sls:
          - dev.ha.mongodb
+       - require:
+         - salt: hosts-init
 
 mongodb-cluster-init:
   salt.state:
-     - tgt: {{ salt['pillar.get']('mongodb:MASTER') }}
+     - tgt: {{ salt['pillar.get']('basic:mongodb:MASTER') }}
      - sls:
        - dev.ha.mongodb.cluster
      - require:
@@ -15,7 +17,7 @@ mongodb-cluster-init:
 
 join-mongodb-cluster:
   salt.state:
-     - tgt: {{ salt['pillar.get']('mongodb:SLAVE') }}
+     - tgt: {{ salt['pillar.get']('basic:mongodb:SLAVE') }}
      - sls:
        - dev.ha.mongodb.cluster.add
      - require:

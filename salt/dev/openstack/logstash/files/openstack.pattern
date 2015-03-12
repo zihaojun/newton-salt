@@ -1,0 +1,6 @@
+OPENSTACK_LOGLEVEL ([D|d]ebug|DEBUG|[N|n]otice|NOTICE|[I|i]nfo|INFO|[W|w]arn?(?:ing)?|WARN?(?:ING)?|[E|e]rr?(?:or)?|ERR?(?:OR)?|[C|c]rit?(?:ical)?|CRIT?(?:ICAL)?|[F|f]atal|FATAL|[S|s]evere|SEVERE|[A|a]udit|AUDIT|[T|t]race|TRACE)
+OPENSTACK_PROG (?:[ a-zA-Z0-9_\-]+\.)+[ A-Za-z0-9_\-$]+\b
+OPENSTACK_PROG_SINGLE [A-Za-z0-9_\-$]+\b
+OPENSTACK_SOURCE %{OPENSTACK_PROG}|%{OPENSTACK_PROG_SINGLE}
+OPENSTACK_REQ_LIST \[((?:req-%{UUID}( None)?|%{UUID}|%{BASE16NUM}|None|-))+\]
+OPENSTACK_LOG %{TIMESTAMP_ISO8601:timestamp} (%{POSINT})? %{OPENSTACK_LOGLEVEL:level} %{OPENSTACK_SOURCE:program} (%{OPENSTACK_REQ_LIST})?%{GREEDYDATA}

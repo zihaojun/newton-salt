@@ -1,13 +1,15 @@
 ntp-init:
   salt.state:
-     - tgt: {{ salt['pillar.get']('corosync:NODES') }}
+     - tgt: {{ salt['pillar.get']('basic:corosync:NODES') }}
      - tgt_type: list
      - sls:
        - dev.ha.ntp
+     - require:
+       - salt: hosts-init
 
 ntp-master-init:
   salt.state:
-     - tgt: {{ salt['pillar.get']('corosync:NODE_1') }}
+     - tgt: {{ salt['pillar.get']('basic:corosync:NODE_1') }}
      - sls:
        - dev.ha.ntp.cluster.master
      - require:
@@ -15,7 +17,7 @@ ntp-master-init:
 
 ntp-slave-init:
   salt.state:
-     - tgt: {{ salt['pillar.get']('corosync:NODE_2') }}
+     - tgt: {{ salt['pillar.get']('basic:corosync:NODE_2') }}
      - sls:
        - dev.ha.ntp.cluster.slave
      - require:

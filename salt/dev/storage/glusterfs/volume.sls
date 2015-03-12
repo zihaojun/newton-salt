@@ -1,10 +1,10 @@
 create-volume:
   glusterfs.created:
-    - name: {{ salt['pillar.get']('glusterfs:VOLUME_NAME','openstack') }}
+    - name: {{ salt['pillar.get']('basic:glusterfs:VOLUME_NAME','openstack') }}
     - bricks: 
-{% if salt['pillar.get']('storage-common:HOSTS',{}) %}
-{% for hostname in salt['pillar.get']('storage-common:HOSTS').keys() %}
-      - {{ hostname }}:{{ salt['pillar.get']('glusterfs:BRICKS','/usr/gluster') }}
+{% if salt['pillar.get']('basic:storage-common:HOSTS',{}) %}
+{% for hostname in salt['pillar.get']('basic:storage-common:HOSTS').keys() %}
+      - {{ hostname }}:{{ salt['pillar.get']('basic:glusterfs:BRICKS','/usr/gluster') }}
 {% endfor %}
 {% endif %}
     - replica: {{ salt['pillar.get']('glusterfs:REPLICA',2) }}

@@ -6,7 +6,7 @@ slave-mongodb-conf:
        - template: jinja
        - defaults:
          HOSTNAME: {{ grains['host'] }}
-         MASTER: {{ pillar['mongodb'].get('MASTER') }}
+         MASTER: {{ salt['pillar.get']('basic:mongodb:MASTER') }}
          MASTER_ENABLED: False
     service.running:
        - name: mongod

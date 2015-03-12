@@ -4,9 +4,9 @@
       - mode: 644
       - template: jinja
       - defaults:
-        HEARTBEAT_NET: {{ salt['pillar.get']('corosync:HEARTBEAT_NET') }}
-        NODE_1: {{ salt['pillar.get']('corosync:NODE_1') }}
-        NODE_2: {{ salt['pillar.get']('corosync:NODE_2') }}
+        HEARTBEAT_NET: {{ salt['pillar.get']('basic:corosync:HEARTBEAT_NET') }}
+        NODE_1: {{ salt['pillar.get']('basic:corosync:NODE_1') }}
+        NODE_2: {{ salt['pillar.get']('basic:corosync:NODE_2') }}
 
 /etc/corosync/authkey:
    file.managed:

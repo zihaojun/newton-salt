@@ -15,7 +15,6 @@ glusterfs_mount_point_base=/var/lib/cinder/mnt
 volume_driver=cinder.volume.drivers.glusterfs.GlusterfsDriver
 {% elif BACKENDS == 'ceph' %}
 {% endif %}
-
 enable_v1_api=true
 enable_v2_api=false
 osapi_volume_listen={{ IPADDR }}
@@ -26,7 +25,7 @@ notification_driver=cinder.openstack.common.notifier.rpc_notifier
 glance_api_servers={{ VIP }}:9292
 glance_num_retries = 300
 glance_request_timeout = 5000
-host={{ IPADDR }}
+host={{ VIP }}
 [database]
 connection=mysql://{{MYSQL_CINDER_USER}}:{{MYSQL_CINDER_PASS}}@{{VIP}}/{{MYSQL_CINDER_DBNAME}}
 max_pool_size=10

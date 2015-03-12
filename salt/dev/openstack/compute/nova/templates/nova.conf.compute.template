@@ -1,0 +1,92 @@
+[DEFAULT]
+debug=false
+verbose=True
+#image_cache_directory_name = /base-image
+glance_api_servers={{ VIP }}:9292
+vnc_enabled = {{ VNC_ENABLED }}
+{% if VNC_ENABLED -%}
+vncserver_listen = 0.0.0.0 
+vncserver_proxyclient_address = {{IPADDR}}
+novncproxy_base_url = http://{{VIP}}:6080/vnc_auto.html
+novncproxy_host = {{IPADDR}}
+{% endif %}
+auth_strategy = keystone
+api_paste_config=/etc/nova/api-paste.ini
+
+network_api_class=nova.network.neutronv2.api.API
+linuxnet_interface_driver = nova.network.linux_net.LinuxOVSInterfaceDriver
+firewall_driver = nova.virt.firewall.NoopFirewallDriver
+security_group_api = neutron
+
+rpc_backend = nova.openstack.common.rpc.impl_kombu
+rabbit_hosts={{ VIP }}:5673
+rabbit_retry_interval=1
+rabbit_retry_backoff=2
+rabbit_max_retries=0
+rabbit_durable_queues=false
+rabbit_ha_queues=True
+
+connection_type=libvirt
+compute_driver=libvirt.LibvirtDriver
+
+resume_guests_state_on_host_boot = True
+running_deleted_instance_action = reap
+
+instance_usage_audit=True
+instance_usage_audit_period=hour
+notify_on_state_change=vm_and_task_stat
+notification_driver = nova.openstack.common.notifier.rpc_notifier
+notification_driver = ceilometer.compute.nova_notifier
+vif_plugging_timeout = 10
+vif_plugging_is_fatal = False
+
+[neutron]
+url=http://{{ VIP }}:9696
+auth_strategy=keystone
+admin_tenant_name=service
+admin_username={{ AUTH_ADMIN_NEUTRON_USER }}
+admin_password={{ AUTH_ADMIN_NEUTRON_PASS }}
+admin_auth_url=http://{{ VIP }}:35357/v2.0
+metadata_proxy_shared_secret = {{ METADATA_PROXY_SECRET }}
+service_metadata_proxy = True
+
+[libvirt]
+inject_password = True
+inject_key = True
+inject_partition = -1
+virt_type = kvm
+live_migration_flag=VIR_MIGRATE_UNDEFINE_SOURCE,VIR_MIGRATE_PEER2PEER,VIR_MIGRATE_LIVE,VIR_MIGRATE_PERSIST_DEST
+disk_cachemodes="file=directsync,block=none"
+qemu_allowed_storage_drivers = gluster
+[hyperv]
+[zookeeper]
+[osapi_v3]
+[conductor]
+[keymgr]
+[cells]
+[database]
+connection = mysql://{{MYSQL_NOVA_USER}}:{{MYSQL_NOVA_PASS}}@{{VIP}}/{{MYSQL_NOVA_DBNAME}}
+[image_file_url]
+[baremetal]
+[rpc_notifier2]
+[matchmaker_redis]
+[ssl]
+[trusted_computing]
+[upgrade_levels]
+[matchmaker_ring]
+[vmware]
+[spice]
+{% if VNC_ENABLED == 'False' or VNC_ENABLED == 'false' -%}
+enabled = True
+agent_enabled = False
+keymap=en-us
+html5proxy_base_url=http://{{VIP}}:6082/spice_auto.html
+server_listen = 0.0.0.0
+server_proxyclient_address = {{IPADDR}}
+{% endif %}
+[keystone_authtoken]
+identity_uri = http://{{VIP}}:35357
+auth_uri = http://{{VIP}}:5000/v2.0
+admin_user = {{AUTH_ADMIN_NOVA_USER}}
+admin_tenant_name = service
+admin_password = {{AUTH_ADMIN_NOVA_PASS}}

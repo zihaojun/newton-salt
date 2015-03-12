@@ -7,12 +7,12 @@ vrrp_script chk_haproxy {
 }
 
 vrrp_instance VI_1 {
-    interface {{ MANAGE_INTERFACE }} 
+    interface {{ VIP_INTERFACE }}
     virtual_router_id 51
-{% if grains['host'] == salt['pillar.get']('corosync:NODE_1') %}
+{% if grains['host'] == salt['pillar.get']('basic:corosync:NODE_1') %}
     state MASTER
     priority 101
-{% elif grains['host'] == salt['pillar.get']('corosync:NODE_2') %}
+{% elif grains['host'] == salt['pillar.get']('basic:corosync:NODE_2') %}
     state BACKUP
     priority 100
 {% endif %}
@@ -21,7 +21,7 @@ vrrp_instance VI_1 {
     auth_pass password
     }
     virtual_ipaddress {
-       {{ VIP }} 
+       {{ VIP }}/{{ VIP_NETMASK }} 
     }
     track_script {
       chk_haproxy

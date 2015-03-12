@@ -24,6 +24,11 @@ horizon-init:
        - require:
          - pkg: horizon-init
 
+/tmp/openstack-post.sh:
+    file.managed:
+       - source: salt://dev/openstack/horizon/files/openstack-post.sh
+       - mode: 755
+
 /etc/httpd/conf.d/openstack-dashboard.conf:
     file.managed:
        - source: salt://dev/openstack/horizon/files/openstack-dashboard.conf

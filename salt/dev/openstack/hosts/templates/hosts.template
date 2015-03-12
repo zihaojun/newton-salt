@@ -1,4 +1,18 @@
 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
 
-{{}}
+{% if CONTROLLER_HOSTS -%}
+{% for hostname,ip in CONTROLLER_HOSTS.items() %}
+{{ ip }} {{ hostname }}
+{% endfor %}
+{% endif %}
+{% if COMPUTE_HOSTS and not ENABLE_COMPUTE -%}
+{% for hostname,ip in COMPUTE_HOSTS.items() %}
+{{ ip }} {{ hostname }}
+{% endfor %}
+{% endif %}
+{% if STORAGE_HOSTS -%}
+{% for hostname,ip in STORAGE_HOSTS.items() %}
+{{ ip }} {{ hostname }}
+{% endfor %}
+{% endif %}

@@ -4,4 +4,3 @@ hosts-init:
        - sls:
          - dev.openstack.hosts
 
-

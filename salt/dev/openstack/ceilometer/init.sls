@@ -31,7 +31,7 @@ ceilometer-init:
         - template: jinja
         - defaults:
           IPADDR: {{ grains['host'] }}
-          VIP: {{ salt['pillar.get']('pacemaker:VIP_HOSTNAME') }}
+          VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
           MONGODB_CEILOMETER_USER: {{ salt['pillar.get']('ceilometer:MONGODB_CEILOMETER_USER') }}
           MONGODB_CEILOMETER_PASS: {{ salt['pillar.get']('ceilometer:MONGODB_CEILOMETER_PASS') }}
           MONGODB_CEILOMETER_DBNAME: {{ salt['pillar.get']('ceilometer:MONGODB_CEILOMETER_DBNAME') }}

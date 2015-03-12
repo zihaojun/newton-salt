@@ -1,6 +1,6 @@
-{% set NETWORK_ENABLED = salt['pillar.get']('neutron:NETWORK_ENABLED') %}
-{% set manage_interface = salt['pillar.get']('neutron:MANAGE_INTERFACE') %}
-{% set data_interface = salt['pillar.get']('neutron:DATA_INTERFACE') %}
+{% set NETWORK_ENABLED = salt['pillar.get']('basic:neutron:NETWORK_ENABLED') %}
+{% set manage_interface = salt['pillar.get']('basic:neutron:MANAGE_INTERFACE') %}
+{% set data_interface = salt['pillar.get']('basic:neutron:DATA_INTERFACE') %}
 {% set manage_ip = grains['ip_interfaces'].get(manage_interface,'') %}
 neutron-init:
     pkg.installed:
@@ -44,7 +44,7 @@ net.ipv4.ip_forward:
           - pkg: neutron-init
         - defaults:
           IPADDR: {{ grains['host'] }}
-          VIP: {{ salt['pillar.get']('pacemaker:VIP_HOSTNAME') }}
+          VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
           SERVICE_TENANT_ID: {{ salt['mysql.query']('keystone',"select id from project where name='service'")['results'][0][0] }}
           AUTH_ADMIN_NOVA_USER: {{ salt['pillar.get']('nova:AUTH_ADMIN_NOVA_USER') }}
           AUTH_ADMIN_NOVA_PASS: {{ salt['pillar.get']('nova:AUTH_ADMIN_NOVA_PASS') }}
@@ -75,9 +75,9 @@ net.ipv4.ip_forward:
         - pkg: neutron-init
       - template: jinja
       - defaults:
-          NEUTRON_NETWORK_TYPE: {{ salt['pillar.get']('neutron:NEUTRON_NETWORK_TYPE') }}
-          NETWORK_VLAN_RANGES: {{ salt['pillar.get']('neutron:NETWORK_VLAN_RANGES') }}
-          TUNNEL_ID_RANGES: {{ salt['pillar.get']('neutron:TUNNEL_ID_RANGES') }}
+          NEUTRON_NETWORK_TYPE: {{ salt['pillar.get']('basic:neutron:NEUTRON_NETWORK_TYPE') }}
+          NETWORK_VLAN_RANGES: {{ salt['pillar.get']('basic:neutron:NETWORK_VLAN_RANGES') }}
+          TUNNEL_ID_RANGES: {{ salt['pillar.get']('basic:neutron:TUNNEL_ID_RANGES') }}
          {% if data_interface == manage_interface %}
           LOCAL_IP: {{ manage_ip[0] }}
          {% elif data_interface != manage_interface %}
@@ -85,7 +85,6 @@ net.ipv4.ip_forward:
          {% else %}
           LOCAL_IP: {{ 'None' }}
          {% endif %}
-
 
 
 /etc/neutron/plugin.ini:
@@ -108,7 +107,7 @@ net.ipv4.ip_forward:
       - template: jinja
       - defaults:
          IPADDR: {{ grains['host'] }}
-         VIP: {{ salt['pillar.get']('pacemaker:VIP_HOSTNAME') }}
+         VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
          AUTH_ADMIN_NEUTRON_USER: {{ salt['pillar.get']('neutron:AUTH_ADMIN_NEUTRON_USER') }}
          AUTH_ADMIN_NEUTRON_PASS: {{ salt['pillar.get']('neutron:AUTH_ADMIN_NEUTRON_PASS') }}
          METADATA_PROXY_SECRET: {{ salt['pillar.get']('nova:METADATA_PROXY_SECRET') }}

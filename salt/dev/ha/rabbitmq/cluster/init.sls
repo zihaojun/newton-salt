@@ -1,6 +1,4 @@
-
-rabbit@{{ salt['pillar.get']('rabbitmq:DISC_NODE') }}:
+rabbit@{{ salt['pillar.get']('basic:rabbitmq:DISC_NODE') }}:
    rabbitmq_cluster.join:
       - user: rabbit
-      - host: {{ salt['pillar.get']('rabbitmq:DISC_NODE') }}
-      - ram_node: True
+      - host: {{ salt['pillar.get']('basic:rabbitmq:DISC_NODE') }}

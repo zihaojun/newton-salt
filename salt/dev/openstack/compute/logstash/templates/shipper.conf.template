@@ -1,0 +1,29 @@
+input{
+	file {
+		path => "/var/log/ceilometer/*.log"
+		start_position => "beginning"
+		add_field => ['component','ceilometer']
+	}
+	file {
+		path => "/var/log/neutron/*.log"
+		start_position => "beginning"
+		add_field => ['component','neutron']
+	}
+	file {
+		path => "/var/log/nova/*.log"
+		start_position => "beginning"
+		add_field => ['component','nova']
+	}
+}
+output{
+	rabbitmq {
+		host => "{{VIP}}"
+                port => 5673
+		user => "guest"
+		password => "guest"
+		exchange => "logstash-rabbitmq"
+		exchange_type => "direct"
+		durable => true
+		persistent => true
+	}
+}

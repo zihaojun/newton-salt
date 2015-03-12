@@ -1,0 +1,42 @@
+[ml2]
+type_drivers = flat,vxlan,vlan,gre 
+tenant_network_types = {{NEUTRON_NETWORK_TYPE}}
+mechanism_drivers = openvswitch,l2population
+[ml2_type_flat]
+# flat_networks =*
+[ml2_type_vlan]
+{% if NEUTRON_NETWORK_TYPE == 'vlan' -%}
+network_vlan_ranges = default:{{NETWORK_VLAN_RANGES}}
+{% endif %}
+[ml2_type_gre]
+{% if NEUTRON_NETWORK_TYPE == 'gre' -%}
+tunnel_id_ranges = {{ TUNNEL_ID_RANGES }}
+{% endif %}
+[ml2_type_vxlan]
+{% if NEUTRON_NETWORK_TYPE == 'vxlan' -%}
+vni_ranges = {{ TUNNEL_ID_RANGES }}
+vxlan_group = 239.1.1.1
+{% endif %}
+
+[agent]
+l2_population = True
+tunnel_types = {{NEUTRON_NETWORK_TYPE}}
+
+[ovs]
+{% if NEUTRON_NETWORK_TYPE == 'gre' or NEUTRON_NETWORK_TYPE == 'vxlan' -%}
+enable_tunneling = True
+{% elif NEUTRON_NETWORK_TYPE == 'vlan' %}
+enable_tunneling = False
+{% endif %}
+integration_bridge = br-int
+{% if NEUTRON_NETWORK_TYPE == 'vlan' -%}
+bridge_mappings = physnet1:br-data
+{% endif %}
+{% if NEUTRON_NETWORK_TYPE == 'gre' or NEUTRON_NETWORK_TYPE == 'vxlan' -%}
+tunnel_type = {{ NEUTRON_NETWORK_TYPE }}
+local_ip = {{ LOCAL_IP }}
+{% endif %}
+[securitygroup]
+firewall_driver = neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+enable_security_group = True
+enable_ipset = True

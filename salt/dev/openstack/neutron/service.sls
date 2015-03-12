@@ -1,9 +1,9 @@
-{% set neutron_network_type = salt['pillar.get']('neutron:NEUTRON_NETWORK_TYPE') %}
-{% set data_interface = salt['pillar.get']('neutron:DATA_INTERFACE') %}
-{% set manage_interface = salt['pillar.get']('neutron:MANAGE_INTERFACE') %}
+{% set neutron_network_type = salt['pillar.get']('basic:neutron:NEUTRON_NETWORK_TYPE') %}
+{% set data_interface = salt['pillar.get']('basic:neutron:DATA_INTERFACE') %}
+{% set manage_interface = salt['pillar.get']('basic:neutron:MANAGE_INTERFACE') %}
 {% set manage_ip = grains['ip_interfaces'].get(manage_interface,'') %}
-{% set public_interface = salt['pillar.get']('neutron:PUBLIC_INTERFACE') %}
-{% set l3_enabled = salt['pillar.get']('neutron:L3_ENABLED') %}
+{% set public_interface = salt['pillar.get']('basic:neutron:PUBLIC_INTERFACE') %}
+{% set l3_enabled = salt['pillar.get']('basic:neutron:L3_ENABLED') %}
 
 openvswitch-service:
   service.running:
@@ -31,7 +31,7 @@ openvswitch-{{ bridge }}-bridge:
 
 {{ data_interface }}_interface_up:
    cmd.run:
-      - name: ifup {{ data_interface }}
+      - name: ifconfig {{ data_interface }} up
       - unless: ip addr show {{ data_interface }}
 
 {% if data_interface != manage_interface %}
@@ -56,7 +56,7 @@ openvswitch-br-data-port:
 {% if l3_enabled %}
 {{ public_interface }}_interface_up:
    cmd.run:
-      - name: ifup {{ public_interface }}
+      - name: ifconfig {{ public_interface }} up
       - unless: ip addr show {{ public_interface }}
 
 openvswitch-br-ex-port:

@@ -6,7 +6,7 @@ slave-ntp:
       - template: jinja
       - defaults:
         MASTER_ENABLED: False
-        MASTER: {{ salt['pillar.get']('corosync:NODE_1') }} 
+        MASTER: {{ salt['pillar.get']('basic:corosync:NODE_1') }} 
    service.running:
       - name: ntpd
       - enable: True

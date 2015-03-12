@@ -2,7 +2,6 @@ rabbitmq-server:
    pkg.installed:
        - pkgs:
          - rabbitmq-server 
-         - MySQL-python
    service.running:
        - enable: True
        - watch:

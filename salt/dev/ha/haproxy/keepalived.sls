@@ -14,8 +14,9 @@ net.ipv4.ip_nonlocal_bind:
       - mode: 644
       - template: jinja
       - defaults:
-        VIP: {{ salt['pillar.get']('pacemaker:VIP') }}
-        MANAGE_INTERFACE: {{ salt['pillar.get']('neutron:MANAGE_INTERFACE') }} 
+        VIP: {{ salt['pillar.get']('basic:pacemaker:VIP') }}
+        VIP_INTERFACE: {{ salt['pillar.get']('basic:pacemaker:VIP_NIC','eth0') }} 
+        VIP_NETMASK: {{ salt['pillar.get']('basic:pacemaker:VIP_NETMASK','24') }}
 
 keepalived:
     service.running:

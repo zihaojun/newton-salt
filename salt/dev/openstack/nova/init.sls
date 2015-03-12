@@ -11,6 +11,7 @@ nova-init:
            - python-novaclient
            - spice-server
            - openstack-nova-spicehtml5proxy 
+           - ntp
 
 /etc/nova/nova.conf:
    file.managed:
@@ -23,7 +24,7 @@ nova-init:
         - template: jinja
         - defaults:
           IPADDR: {{ grains['host'] }}
-          VIP: {{ salt['pillar.get']('pacemaker:VIP_HOSTNAME') }}
+          VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
           VNC_ENABLED: {{ salt['pillar.get']('nova:VNC_ENABLED') }}
           COMPUTE_ENABLED: {{ salt['pillar.get']('nova:COMPUTE_ENABLED') }}
           MYSQL_NOVA_USER: {{ salt['pillar.get']('nova:MYSQL_NOVA_USER') }}

@@ -1,20 +1,23 @@
 rabbitmq-init:
   salt.state:
-     - tgt: {{ salt['pillar.get']('corosync:NODES') }}
+     - tgt: {{ salt['pillar.get']('basic:corosync:NODES') }}
      - tgt_type: list
      - sls:
        - dev.ha.rabbitmq
+     - require:
+       - salt: hosts-init
+
 
 join-cluster:
   salt.state:
-     - tgt:  {{ salt['pillar.get']('rabbitmq:RAM_NODE') }}
+     - tgt:  {{ salt['pillar.get']('basic:rabbitmq:RAM_NODE') }}
      - sls:  dev.ha.rabbitmq.cluster
      - require:
        - salt: rabbitmq-init
 
 set-policy:
   salt.state:
-     - tgt:  {{ salt['pillar.get']('rabbitmq:DISC_NODE') }}
+     - tgt:  {{ salt['pillar.get']('basic:rabbitmq:DISC_NODE') }}
      - sls:  dev.ha.rabbitmq.cluster.policy
      - require:
        - salt: join-cluster

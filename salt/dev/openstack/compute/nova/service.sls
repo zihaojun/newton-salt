@@ -1,12 +1,12 @@
 libvirtd:
    service.running:
-       - enable: True
-       - watch:
-         - service: messagebus
+      - enable: True
+      - watch:
+        - service: messagebus
 
 messagebus:
    service.running:
-       - enable: True
+      - enable: True
 
 openstack-nova-compute:
    service.running:
@@ -14,5 +14,6 @@ openstack-nova-compute:
       - watch:
         - service: libvirtd 
 
-
-
+crond:
+   service.running:
+      - enable: True

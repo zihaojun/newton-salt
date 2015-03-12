@@ -5,7 +5,7 @@ cinder-init:
          - python-cinderclient
          - python-oslo-db
          - targetcli
-{% if salt['pillar.get']('cinder:BACKENDS') == 'glusterfs' %}
+{% if salt['pillar.get']('basic:cinder:BACKENDS') == 'glusterfs' %}
          - glusterfs
          - glusterfs-libs
          - glusterfs-fuse
@@ -19,7 +19,7 @@ cinder-init:
         - group: cinder
         - template: jinja
         - defaults:
-          VOLUME_URL: {{ salt['pillar.get']('cinder:VOLUME_URL') }}
+          VOLUME_URL: {{ salt['pillar.get']('basic:cinder:VOLUME_URL') }}
         - require:
           - pkg: cinder-init
 {% endif %}
@@ -33,8 +33,8 @@ cinder-init:
         - template: jinja
         - defaults:
           IPADDR: {{ grains['host'] }}
-          VIP: {{ salt['pillar.get']('pacemaker:VIP_HOSTNAME') }}
-          BACKENDS: {{ salt['pillar.get']('cinder:BACKENDS') }}
+          VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
+          BACKENDS: {{ salt['pillar.get']('basic:cinder:BACKENDS') }}
           MYSQL_CINDER_USER: {{ salt['pillar.get']('cinder:MYSQL_CINDER_USER') }}
           MYSQL_CINDER_PASS: {{ salt['pillar.get']('cinder:MYSQL_CINDER_PASS') }}
           MYSQL_CINDER_DBNAME: {{ salt['pillar.get']('cinder:MYSQL_CINDER_DBNAME') }}

@@ -22,7 +22,7 @@ keystone-init:
       - template: jinja
         ADMIN_TOKEN: {{ salt['pillar.get']('keystone:ADMIN_TOKEN') }}
         IPADDR: {{ grains['host'] }}
-        VIP: {{ salt['pillar.get']('pacemaker:VIP_HOSTNAME') }}
+        VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
         MYSQL_KEYSTONE_USER: {{ salt['pillar.get']('keystone:MYSQL_KEYSTONE_USER') }}
         MYSQL_KEYSTONE_PASS: {{ salt['pillar.get']('keystone:MYSQL_KEYSTONE_PASS') }}
         MYSQL_KEYSTONE_DBNAME: {{ salt['pillar.get']('keystone:MYSQL_KEYSTONE_DBNAME') }}

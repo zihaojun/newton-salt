@@ -1,21 +1,32 @@
 mariadb-init:
   salt.state:
-     - tgt: {{ salt['pillar.get']('corosync:NODES') }}
+     - tgt: {{ salt['pillar.get']('basic:corosync:NODES') }}
      - tgt_type: list
      - sls:
        - dev.ha.mariadb
+     - require:
+       - salt: hosts-init
 
-galera-cluster-init:
+create-sst-user:
   salt.state:
-     - tgt: {{ salt['pillar.get']('mariadb:MASTER') }}
+     - tgt: {{ salt['pillar.get']('basic:corosync:NODES') }}
+     - tgt_type: list
      - sls:
-       - dev.ha.mariadb.cluster
+       - dev.ha.mariadb.create-auth-user
      - require:
        - salt: mariadb-init
 
+galera-cluster-init:
+  salt.state:
+     - tgt: {{ salt['pillar.get']('basic:mariadb:MASTER') }}
+     - sls:
+       - dev.ha.mariadb.cluster
+     - require:
+       - salt: create-sst-user
+
 join-galera-cluster:
   salt.state:
-     - tgt: {{ salt['pillar.get']('mariadb:SLAVE') }}
+     - tgt: {{ salt['pillar.get']('basic:mariadb:SLAVE') }}
      - sls:
        - dev.ha.mariadb.cluster.add
      - require:

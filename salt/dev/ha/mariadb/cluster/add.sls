@@ -7,7 +7,7 @@ slave-my-cnf:
        - defaults:
          ID: 2
          HOSTNAME: {{ grains['host'] }}
-         MASTER: {{ pillar['mariadb'].get('MASTER') }}
+         MASTER: {{ salt['pillar.get']('basic:mariadb:MASTER') }}
          MASTER_ENABLED: False
          SST_USER: {{ pillar['mariadb'].get('SST_USER') }}
          SST_PASS: {{ pillar['mariadb'].get('SST_PASS') }}

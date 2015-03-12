@@ -4,9 +4,9 @@
       - mode: 644
       - template: jinja
       - defaults: 
-        VIP_HOSTNAME: {{ salt['pillar.get']('pacemaker:VIP_HOSTNAME') }}
-        NODE_1: {{ salt['pillar.get']('corosync:NODE_1') }}
-        NODE_2: {{ salt['pillar.get']('corosync:NODE_2') }}
+        VIP_HOSTNAME: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
+        NODE_1: {{ salt['pillar.get']('basic:corosync:NODE_1') }}
+        NODE_2: {{ salt['pillar.get']('basic:corosync:NODE_2') }}
    service.running:
       - name: haproxy
       - watch:
