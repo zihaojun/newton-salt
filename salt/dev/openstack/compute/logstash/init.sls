@@ -1,15 +1,24 @@
+include:
+  - dev.openstack.logstash.common 
+
 logstash-compute-init:
    pkg.installed:
       - pkgs:
         - logstash
-        - logstash-contrib
 
-/etc/logstash/conf.d/shipper.conf:
-   file.managed:
-      - source: salt://dev/openstack/compute/logstash/templates/shipper.conf.template
-      - mode: 644
-      - template: jinja
-      - defaults:
-        VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
-      - require:
-        - pkg: logstash-compute-init
+extend:
+   /etc/logstash/conf.d/collect:
+     file.recurse:
+         - require:
+           - pkg: logstash-compute-init
+
+   /etc/logstash/conf.d/collect/output-rabbitmq.conf:
+     file.managed:
+         - require:
+           - pkg: logstash-compute-init
+           - file: /etc/logstash/conf.d/collect
+
+   /opt/logstash/patterns/openstack:
+     file.managed:
+         - require:
+           - pkg: logstash-compute-init

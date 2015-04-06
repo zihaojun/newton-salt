@@ -20,6 +20,7 @@ keystone-init:
       - user: keystone
       - group: keystone
       - template: jinja
+      - defaults:
         ADMIN_TOKEN: {{ salt['pillar.get']('keystone:ADMIN_TOKEN') }}
         IPADDR: {{ grains['host'] }}
         VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}

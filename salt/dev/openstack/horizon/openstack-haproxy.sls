@@ -7,6 +7,10 @@
         VIP_HOSTNAME: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
         NODE_1: {{ salt['pillar.get']('basic:corosync:NODE_1') }}
         NODE_2: {{ salt['pillar.get']('basic:corosync:NODE_2') }}
+        ENABLE_CINDER: {{ salt['pillar.get']('config_cinder_install',False) }}
+        ENABLE_HEAT: {{ salt['pillar.get']('config_heat_install',False) }}
+        ENABLE_CEILOMETER: {{ salt['pillar.get']('config_ceilometer_install',False) }}
+        ENABLE_LOGSTASH: {{ salt['pillar.get']('config_logstash_install',False) }}
    service.running:
       - name: haproxy
       - watch:

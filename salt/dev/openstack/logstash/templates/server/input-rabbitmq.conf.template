@@ -1,0 +1,9 @@
+input{
+    rabbitmq {
+        host => "{{VIP}}"
+        port => 5673
+        user => "guest"
+        password => "guest"
+        durable => false 
+    }
+}

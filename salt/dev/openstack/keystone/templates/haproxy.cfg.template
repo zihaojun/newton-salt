@@ -20,26 +20,29 @@ defaults
     clitimeout 50000
     srvtimeout 50000
 
-listen galera-cluster
+listen galera_cluster
         bind {{ VIP_HOSTNAME }}:3306
         balance  source
         server {{ NODE_1 }} {{ NODE_1 }}:3306 check port 4567 inter 2000 rise 2 fall 5
         server {{ NODE_2 }} {{ NODE_2 }}:3306 check port 4567 inter 2000 rise 2 fall 5 backup 
 
-listen mongodb-cluster
+listen mongodb_cluster
         bind {{ VIP_HOSTNAME }}:27017
         balance  source
         server {{ NODE_1 }} {{ NODE_1 }}:27017 check inter 2000 rise 2 fall 5
         server {{ NODE_2 }} {{ NODE_2 }}:27017 check inter 2000 rise 2 fall 5 backup
 
-listen rabbitmq
+listen rabbitmq_cluster
 	bind	{{ VIP_HOSTNAME }}:5673
 	balance source
 	mode 	tcp
+	option  tcpka
+	timeout client 0
+	timeout server 0
 	server 	{{ NODE_1 }} {{ NODE_1 }}:5672 check inter 2000 rise 2 fall 3
 	server 	{{ NODE_2 }} {{ NODE_2 }}:5672 check inter 2000 rise 2 fall 3
 
-listen memcache
+listen memcache_cluster
 	bind	{{ VIP_HOSTNAME }}:11211
 	balance source
 	mode 	tcp

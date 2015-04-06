@@ -4,7 +4,7 @@ glance-init:
        - tgt_type: list
        - sls:
          - dev.openstack.glance
-{% if salt['pillar.get']('basic:cinder:BACKENDS') == 'glusterfs' and not salt['pillar.get']('basic:storage-common:ADD_NODE_ENABLED',False) %}
+{% if salt['pillar.get']('basic:glance:IMAGE_BACKENDS','local') == 'glusterfs' and not salt['pillar.get']('basic:storage-common:ADD_NODE_ENABLED',False) %}
        - require:
          - salt: glusterfs-volume 
 {% endif %}

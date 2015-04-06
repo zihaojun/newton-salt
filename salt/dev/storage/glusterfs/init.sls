@@ -8,6 +8,12 @@ glusterfs-init:
         - glusterfs-server
         - glusterfs-api
 
+glusterd:
+   service.running:
+      - enable: True
+      - require:
+        - pkg: glusterfs-init
+
 /etc/crontab:
   file.managed:
    - source: salt://dev/openstack/compute/ntp/templates/crontab.template
@@ -17,12 +23,6 @@ glusterfs-init:
    - template: jinja
    - defaults:
      VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
-
-glusterd:
-   service.running:
-      - enable: True
-      - require:
-        - pkg: glusterfs-init
 
 crond:
    service.running:

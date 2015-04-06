@@ -1,6 +1,6 @@
 keystone-init:
    salt.state:
-       - tgt: {{ salt['pillar.get']('basic:corosync:NODES') }}
+       - tgt: {{ salt['pillar.get']('basic:corosync:NODES') }} 
        - tgt_type: list
        - sls:
          - dev.openstack.keystone
@@ -12,10 +12,10 @@ keystone-init:
 
 keystone-db-init:
    salt.state:
-       - tgt: {{ salt['pillar.get']('basic:mariadb:MASTER') }}
+       - tgt: {{ salt['pillar.get']('basic:mariadb:MASTER') }} 
        - sls:
          - dev.openstack.keystone.db
-       - require:
+       - require: 
          - salt: keystone-init
          - salt: galera-cluster-init
 

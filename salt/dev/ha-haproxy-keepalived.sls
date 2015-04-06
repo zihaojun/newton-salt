@@ -24,11 +24,13 @@ haproxy-keepalived:
 
 haproxy-service:
    salt.state:
-      - tgt: {{ salt['pillar.get']('basic:corosync:NODE_1') }}
+      - tgt: {{ salt['pillar.get']('basic:corosync:NODES') }}
+      - tgt_type: list
       - sls:
         - dev.ha.haproxy.service
       - require:
         - salt: haproxy-keepalived
+
 {% else %}
 crm-haproxy:
    salt.state:

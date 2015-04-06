@@ -6,7 +6,7 @@
 {{ ip }} {{ hostname }}
 {% endfor %}
 {% endif %}
-{% if COMPUTE_HOSTS and not ENABLE_COMPUTE -%}
+{% if COMPUTE_HOSTS and not STORAGE_INTERFACE_EQUAL_MANAGE -%}
 {% for hostname,ip in COMPUTE_HOSTS.items() %}
 {{ ip }} {{ hostname }}
 {% endfor %}
@@ -15,4 +15,5 @@
 {% for hostname,ip in STORAGE_HOSTS.items() %}
 {{ ip }} {{ hostname }}
 {% endfor %}
+
 {% endif %}

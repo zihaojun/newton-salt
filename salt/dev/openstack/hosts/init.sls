@@ -1,3 +1,6 @@
+{% set storage_interface = salt['pillar.get']('basic:storage-common:STORAGE_INTERFACE') %}
+{% set manage_interface = salt['pillar.get']('basic:neutron:MANAGE_INTERFACE') %}
+
 os-util-pkg:
    pkg.installed:
       - pkgs:
@@ -8,10 +11,14 @@ os-util-pkg:
       - source: salt://dev/openstack/hosts/templates/hosts.template
       - template: jinja
       - defaults:
-        COMPUTE_HOSTS: {{ salt['pillar.get']('basic:nova:COMPUTE:HOSTS',False) }}
-        CONTROLLER_HOSTS: {{ salt['pillar.get']('basic:nova:CONTROLLER:HOSTS',False) }}
-        STORAGE_HOSTS: {{ salt['pillar.get']('basic:storage-common:HOSTS',False) }}
-        ENABLE_COMPUTE: {{ salt['pillar.get']('basic:storage-common:ENABLE_COMPUTE',False) }}
+        COMPUTE_HOSTS: {{ salt['pillar.get']('basic:nova:COMPUTE:HOSTS','') }}
+        CONTROLLER_HOSTS: {{ salt['pillar.get']('basic:nova:CONTROLLER:HOSTS','') }}
+        STORAGE_HOSTS: {{ salt['pillar.get']('basic:storage-common:HOSTS','') }}
+{% if storage_interface == manage_interface %}
+        STORAGE_INTERFACE_EQUAL_MANAGE: {{ True }}
+{% else %}
+        STORAGE_INTERFACE_EQUAL_MANAGE: {{ False }}
+{% endif %}
 
 add-vip-hosts:
    host.present:

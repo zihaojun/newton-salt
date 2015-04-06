@@ -1,43 +1,64 @@
+include:
+  - dev.openstack.logstash.common
+
 logstash-init:
    pkg.installed:
       - pkgs:
         - elasticsearch
         - logstash
-        - logstash-contrib
         - httpd
 
 /etc/elasticsearch/elasticsearch.yml:
    file.managed:
-      - source: salt://dev/openstack/logstash/files/elasticsearch.yml
+      - source: salt://dev/openstack/logstash/templates/elasticsearch.yml
+      - mode: 644
+      - template: jinja
+      - defaults:
+        HOSTNAME: {{ grains['host'] }} 
+      - require:
+        - pkg: logstash-init
+
+/etc/sysconfig/elasticsearch:
+   file.managed:
+      - source: salt://dev/openstack/logstash/files/elasticsearch
       - mode: 644
       - require:
         - pkg: logstash-init
 
-/etc/logstash/conf.d/broker.conf:
+extend:
+   /etc/logstash/conf.d/collect:
+     file.recurse:
+         - require:
+           - pkg: logstash-init
+
+   /etc/logstash/conf.d/collect/output-rabbitmq.conf:
+     file.managed:
+         - require:
+           - pkg: logstash-init
+           - file: /etc/logstash/conf.d/collect
+
+   /opt/logstash/patterns/openstack:
+     file.managed:
+         - require:
+           - pkg: logstash-init
+
+/etc/logstash/conf.d/server/input-rabbitmq.conf:
    file.managed:
-      - source: salt://dev/openstack/logstash/templates/broker.conf.template
+      - source: salt://dev/openstack/logstash/templates/server/input-rabbitmq.conf.template
       - mode: 644
       - template: jinja
       - defaults:
         VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
-        NODE_1: {{ salt['pillar.get']('basic:corosync:NODE_1') }}
       - require:
         - pkg: logstash-init
 
-/etc/logstash/conf.d/shipper.conf:
+/etc/logstash/conf.d/server/output-elastcisearch.conf:
    file.managed:
-      - source: salt://dev/openstack/logstash/templates/shipper.conf.template
+      - source: salt://dev/openstack/logstash/templates/server/output-elastcisearch.conf.template
       - mode: 644
       - template: jinja
       - defaults:
         VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
-      - require:
-        - pkg: logstash-init
-
-/opt/logstash/patterns/openstack:
-   file.managed:
-      - source: salt://dev/openstack/logstash/files/openstack.pattern
-      - mode: 644
       - require:
         - pkg: logstash-init
 
@@ -50,7 +71,7 @@ kibana:
       - name: tar xf /tmp/kibana-3.1.2.tar.gz -C /var/www/html/
       - require:
         - file: /tmp/kibana-3.1.2.tar.gz 
-      - unless: test -f /var/www/html/kibana*
+      - unless: test -d /var/www/html/kibana*
 
 /var/www/html/kibana:
    file.rename:
@@ -59,13 +80,12 @@ kibana:
       - require:
         - cmd: kibana
 
-{% set node_1 = salt['pillar.get']('basic:corosync:NODE_1') %}
 /var/www/html/kibana/config.js:
    file.managed:
       - source: salt://dev/openstack/logstash/templates/config.js.template
       - template: jinja
       - defaults:
-        VIP: {{ salt['pillar.get']('basic:nova:CONTROLLER:HOSTS')[node_1] }}
+        VIP: {{ salt['pillar.get']('basic:pacemaker:VIP') }}
       - mode: 644
       - require:
         - file: /var/www/html/kibana

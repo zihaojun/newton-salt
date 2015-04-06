@@ -2,6 +2,7 @@ driftfile /var/lib/ntp/drift
 restrict -4 default kod nomodify notrap 
 restrict -6 default kod nomodify notrap 
 restrict 127.0.0.1
+# use command "ntpq -c assoc" to check it
 {% if MASTER_ENABLED -%}
 server 202.120.2.100 prefer
 {% else %}

@@ -1,73 +1,69 @@
-keystone.endpoint: 'http://node-34:35357/v2.0'
+config_cinder_install: True
+config_heat_install: False 
+config_ceilometer_install: True
+config_logstash_install: True
+config_compute_install: True 
+
+keystone.endpoint: 'http://node-191:35357/v2.0'
 
 basic:
    rabbitmq:
-      DISC_NODE: node-34
-      RAM_NODE: node-35
+      DISC_NODE: node-191
+      RAM_NODE: node-192
   
    mariadb:
-      MASTER: node-34
-      SLAVE: node-35
+      MASTER: node-191
+      SLAVE: node-192
  
    mongodb:
-      MASTER: node-34
-      SLAVE: node-35
+      MASTER: node-191
+      SLAVE: node-192
 
    corosync:
-      HEARTBEAT_NET: 172.20.10.0
-      NODES: node-34,node-35
-      NODE_1: node-34
-      NODE_2: node-35
+      HEARTBEAT_NET: 192.168.141.0
+      NODES: node-191,node-192
+      NODE_1: node-191
+      NODE_2: node-192
 
    pacemaker:
-      VIP: 172.20.11.60
+      VIP: 192.168.141.60
       VIP_HOSTNAME: controller
       VIP_NETMASK: 24
       VIP_NIC: eth0
-      VIP_PREFER_LOCATE: node-34
+      VIP_PREFER_LOCATE: node-191
 
    storage-common:
       HOSTS: 
-        gluster30: 10.0.0.30
-        gluster31: 10.0.0.31
-        gluster32: 10.0.0.32
-        gluster33: 10.0.0.33
-        gluster34: 10.0.0.34
-        gluster35: 10.0.0.35
-        gluster36: 10.0.0.36
-        gluster37: 10.0.0.37
+        gluster-1: 20.20.20.193
+        gluster-2: 20.20.20.194
        
-      NODES: compute-1,compute-2
-      ENABLE_COMPUTE: False 
-      ADD_NODE_ENABLED: True
-      STORAGE_INTERFACE: eth0
+      NODES: node-193,node-194
+      ENABLE_COMPUTE: True
+      ADD_NODE_ENABLED: False
+      STORAGE_INTERFACE: eth3
 
    glusterfs:
-      VOLUME_NODE: gluster36
+      VOLUME_NODE: node-193
       VOLUME_NAME: openstack
-      BRICKS: /mnt/gluster
-      MOUNT_OPT: backup-volfile-servers=gluster-2
+      BRICKS: /gfs/gluster
+      MOUNT_OPT: backup-volfile-servers=node-194
 
    glance:
-      IMAGE_BACKENDS: local   # optional configuration: local|glusterfs    
+      IMAGE_BACKENDS: glusterfs   # optional configuration: local|glusterfs    
 
    nova:
       CONTROLLER:
         HOSTS:
-          node-34: 172.20.11.34
-          node-35: 172.20.11.35
+          node-191: 192.168.141.191 
+          node-192: 192.168.141.192
     
       COMPUTE:
         HOSTS:
-          node-30: 172.20.11.30
-          node-31: 172.20.11.31
-          node-32: 172.20.11.32
-          node-33: 172.20.11.33
-          node-36: 172.20.11.36
-          node-37: 172.20.11.37
-        INSTANCE_BACKENDS: local   # optional configuration: local|glusterfs
-        NODES: node-30,node-31,node-32,node-33
-        ADD_NODE_ENABLED: True 
+          node-193: 192.168.141.193
+          node-194: 192.168.141.194
+        INSTANCE_BACKENDS: glusterfs   # optional configuration: local|glusterfs
+        NODES: node-193,node-194
+        ADD_NODE_ENABLED: False 
   
    neutron:
       NEUTRON_NETWORK_TYPE: vxlan  # optional configuration: vlan|gre|vxlan
@@ -75,11 +71,10 @@ basic:
       TUNNEL_ID_RANGES: 1:1000
       NETWORK_ENABLED: True
       PUBLIC_INTERFACE: eth1
-      L3_ENABLED: False
-      DATA_INTERFACE: eth0
+      L3_ENABLED: True
+      DATA_INTERFACE: eth2
       MANAGE_INTERFACE: eth0
 
    cinder:
-      BACKENDS: local  # optional backends: glusterfs,local or cephonly support glusterfs now. 
-      VOLUME_URL: gluster-1:/openstack -o backup-volfile-servers=gluster-2
-
+      BACKENDS: glusterfs  # optional backends: glusterfs,local or cephonly support glusterfs now. 
+      VOLUME_URL: node-193:/openstack -o backup-volfile-servers=node-194 # use ':' to seperate

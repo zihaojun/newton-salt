@@ -1,7 +1,10 @@
 {% set NETWORK_ENABLED = salt['pillar.get']('basic:neutron:NETWORK_ENABLED') %}
+{% set L3_ENABLED = salt['pillar.get']('basic:neutron:L3_ENABLED') %}
 {% set manage_interface = salt['pillar.get']('basic:neutron:MANAGE_INTERFACE') %}
 {% set data_interface = salt['pillar.get']('basic:neutron:DATA_INTERFACE') %}
+{% set public_interface = salt['pillar.get']('basic:neutron:PUBLIC_INTERFACE') %}
 {% set manage_ip = grains['ip_interfaces'].get(manage_interface,'') %}
+
 neutron-init:
     pkg.installed:
        - pkgs:
@@ -63,6 +66,18 @@ net.ipv4.ip_forward:
       - defaults:
         DATA_INTERFACE: {{ data_interface }}
         DATA_IP: {{ '10.10.10.' + manage_ip[0].split('.')[3] }} 
+{% endif %}
+
+{% if L3_ENABLED %}
+{% if public_interface != manage_interface %}
+/etc/sysconfig/network-scripts/ifcfg-{{public_interface}}:
+   file.managed:
+      - source: salt://dev/openstack/neutron/templates/ifcfg-public-interface.template 
+      - mode: 644
+      - template: jinja
+      - defaults:
+        PUBLIC_INTERFACE: {{ public_interface }}
+{% endif %}
 {% endif %}
 
 /etc/neutron/plugins/ml2/ml2_conf.ini:

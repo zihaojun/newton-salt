@@ -3,7 +3,7 @@ glance-init:
       - pkgs:
         - openstack-glance
         - python-glanceclient
-{% if salt['pillar.get']('basic:cinder:BACKENDS') == 'glusterfs' %}
+{% if salt['pillar.get']('basic:glance:IMAGE_BACKENDS','local') == 'glusterfs' %}
         - glusterfs
         - glusterfs-libs
         - glusterfs-fuse
@@ -81,4 +81,13 @@ rmdir-glance-default:
       - require:
         - file: /{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}/glance
         - cmd: rmdir-glance-default
+
+/etc/rc.d/rc.local:
+   file.managed:
+      - source: salt://dev/openstack/glance/templates/rc.local.template
+      - mode: 755
+      - template: jinja
+      - defaults:
+        VOLUME_URL: {{ salt['pillar.get']('basic:cinder:VOLUME_URL') }}
+        VOLUME_NAME: {{ salt['pillar.get']('basic:glusterfs:VOLUME_NAME') }} 
 {% endif %}

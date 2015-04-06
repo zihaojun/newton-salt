@@ -26,6 +26,9 @@ bind_host = {{IPADDR}}
 dhcp_agents_per_network = 2
 api_workers = 4
 rpc_workers = 4
+
+dhcp_delete_namespaces = True
+router_delete_namespaces = True
 [agent]
 root_helper = sudo neutron-rootwrap /etc/neutron/rootwrap.conf
 

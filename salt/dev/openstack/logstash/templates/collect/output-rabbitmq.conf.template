@@ -1,0 +1,12 @@
+output{
+  rabbitmq {
+	host => "{{VIP}}"
+	port => 5673
+	user => "guest"
+	password => "guest"
+	exchange => "logstash-rabbitmq"
+	exchange_type => "direct"
+	durable => true 
+	persistent => false
+    }
+}

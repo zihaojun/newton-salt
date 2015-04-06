@@ -11,8 +11,10 @@ keystone-roles:
       - admin
       - Member
       - workflow
+{% if salt['pillar.get']('config_heat_install',False) %}
       - heat_stack_user
       - heat_stack_owner
+{% endif %}
 
 {{ salt['pillar.get']('keystone:ADMIN_USER','admin') }}:
   keystone.user_present:
@@ -29,8 +31,9 @@ keystone-roles:
       - keystone: keystone-roles
 
 
-{% set user_list = ['glance','nova','neutron','cinder','ceilometer','heat'] %} 
+{% set user_list = ['glance','nova','neutron','cinder','heat','ceilometer'] %}
 {% for user in user_list %}
+{% if salt['pillar.get']('config_' + user + '_install',True) %}
 {{user}}:
   keystone.user_present:
 {% if user == 'glance' %}
@@ -60,11 +63,13 @@ keystone-roles:
     - require:
       - keystone: keystone-tenants
       - keystone: keystone-roles
+{% endif %}
 {% endfor %}
 
 
-{% set service_list = ['keystone','glance','nova','neutron','cinder','cinderv2','ceilometer','heat'] %}
+{% set service_list = ['keystone','glance','nova','neutron','cinder','cinderv2','heat','ceilometer'] %}
 {% for srv in service_list %}
+{% if salt['pillar.get']('config_' + srv + '_install',True) %}
 {{srv}}-srv:
   keystone.service_present:
     - name: {{srv}}
@@ -93,9 +98,11 @@ keystone-roles:
     - service_type: orchestration
     - description: Orchestration Service
 {% endif %}
+{% endif %}
 {% endfor %}
 
 {% for srv in service_list %}
+{% if salt['pillar.get']('config_' + srv + '_install',True) %}
 {{srv}}-endpoint:
   keystone.endpoint_present:
     - name: {{srv}}
@@ -135,4 +142,5 @@ keystone-roles:
     - region: regionOne
     - require:
       - keystone: {{srv}}-srv
+{% endif %}
 {% endfor %}

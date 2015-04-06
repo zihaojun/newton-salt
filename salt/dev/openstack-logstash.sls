@@ -7,7 +7,7 @@ logstash-init:
 
 logstash-service:
    salt.state:
-       - tgt: {{ salt['pillar.get']('basic:corosync:NODE_1') }}
+       - tgt: {{ salt['pillar.get']('basic:corosync:NODES') }}
        - tgt_type: list
        - sls:
          - dev.openstack.logstash.service

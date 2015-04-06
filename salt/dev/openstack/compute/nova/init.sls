@@ -75,7 +75,7 @@ nova-compute-init:
 copy-nova-dir:
    cmd.run:
       - name: cp -r /var/lib/nova /{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}/
-      - onlyif: test -d /var/lib/nova
+      - unless: test -h /var/lib/nova
       - require:
         - mount: /{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}
 
@@ -105,4 +105,14 @@ rmdir-nova-default:
       - require:
         - file: /{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}/nova
         - cmd: rmdir-nova-default
+
+mount-volume-reboot:
+   file.managed:
+      - name: /etc/rc.d/rc.local
+      - source: salt://dev/openstack/compute/nova/templates/rc.local.template
+      - mode: 755
+      - template: jinja
+      - defaults: 
+        VOLUME_URL: {{ salt['pillar.get']('basic:cinder:VOLUME_URL') }}
+        VOLUME_NAME: {{ salt['pillar.get']('basic:glusterfs:VOLUME_NAME') }}
 {% endif %}
