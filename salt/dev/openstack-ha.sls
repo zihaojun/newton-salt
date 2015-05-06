@@ -6,6 +6,9 @@ include:
    - dev.ha-rabbitmq
    - dev.ha-mariadb
    - dev.ha-mongodb
+{% if salt['pillar.get']('config_logstash_install',False) %}
+   - dev.ha-elasticsearch
+{% endif %}
    - dev.ha-corosync-pacemaker
    - dev.ha-haproxy-keepalived
    - dev.openstack-keystone

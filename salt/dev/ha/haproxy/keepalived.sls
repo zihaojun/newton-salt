@@ -18,10 +18,16 @@ net.ipv4.ip_nonlocal_bind:
         VIP_INTERFACE: {{ salt['pillar.get']('basic:pacemaker:VIP_NIC','eth0') }} 
         VIP_NETMASK: {{ salt['pillar.get']('basic:pacemaker:VIP_NETMASK','24') }}
 
+/etc/sysconfig/keepalived:
+    file.managed:
+      - source: salt://dev/ha/haproxy/files/keepalived
+      - mode: 644
+
 keepalived:
     service.running:
       - enable: True
       - watch:
         - file: /etc/keepalived/keepalived.conf
+        - file: /etc/sysconfig/keepalived
 
 

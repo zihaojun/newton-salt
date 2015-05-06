@@ -32,7 +32,7 @@ openvswitch-{{ bridge }}-bridge:
 {{ data_interface }}_interface_up:
    cmd.run:
       - name: ifconfig {{ data_interface }} up
-      - unless: ip addr show {{ data_interface }}
+      - unless: ip addr show {{ data_interface }} | grep -i up
 
 {% if data_interface != manage_interface %}
 add-data-interface-ip:
@@ -57,7 +57,7 @@ openvswitch-br-data-port:
 {{ public_interface }}_interface_up:
    cmd.run:
       - name: ifconfig {{ public_interface }} up
-      - unless: ip addr show {{ public_interface }}
+      - unless: ip addr show {{ public_interface }} | grep -i up
 
 openvswitch-br-ex-port:
    cmd.run:

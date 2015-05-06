@@ -8,7 +8,7 @@ rabbitmq-init:
        - salt: hosts-init
 
 
-join-cluster:
+join-rabbitmq-cluster:
   salt.state:
      - tgt:  {{ salt['pillar.get']('basic:rabbitmq:RAM_NODE') }}
      - sls:  dev.ha.rabbitmq.cluster
@@ -20,4 +20,4 @@ set-policy:
      - tgt:  {{ salt['pillar.get']('basic:rabbitmq:DISC_NODE') }}
      - sls:  dev.ha.rabbitmq.cluster.policy
      - require:
-       - salt: join-cluster
+       - salt: join-rabbitmq-cluster

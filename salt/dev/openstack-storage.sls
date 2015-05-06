@@ -18,6 +18,35 @@ storage-net-init:
          - dev.storage.common
 {% endif %}
 
+{% if salt['pillar.get']('basic:glance:IMAGE_BACKENDS') == 'glusterfs' %}
+glance-glusterfs-init:
+   salt.state:
+       - tgt: {{ salt['pillar.get']('basic:corosync:NODES') }}
+       - tgt_type: list
+       - sls:
+         - dev.storage.glusterfs.pkg
+       - require:
+         - salt: hosts-init
+{% if storage_interface != manage_interface %}
+         - salt: storage-net-init
+{% endif %}
+glance-glusterfs-peer:
+   salt.state:
+       - tgt: {{ salt['pillar.get']('basic:corosync:NODE_1') }}
+       - sls:
+         - dev.storage.glusterfs.glance_cluster
+       - require:
+         - salt: glance-glusterfs-init
+
+glance-glusterfs-volume:
+   salt.state:
+       - tgt: {{ salt['pillar.get']('basic:glusterfs:VOLUME_NODE') }}
+       - sls:
+         - dev.storage.glusterfs.glance_volume
+       - require:
+         - salt: glance-glusterfs-peer
+{% endif %}
+
 {% if salt['pillar.get']('basic:cinder:BACKENDS') == 'glusterfs' %}
 glusterfs-init:
    salt.state:

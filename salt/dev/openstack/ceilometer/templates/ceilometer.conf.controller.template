@@ -1,6 +1,6 @@
 [DEFAULT]
 debug=False
-rpc_backend=ceilometer.openstack.common.rpc.impl_kombu
+rpc_backend=rabbit
 rabbit_hosts={{ VIP }}:5673
 rabbit_ha_queues=true
 rabbit_retry_interval=1
@@ -20,6 +20,14 @@ use_tpool=True
 max_pool_size=10
 max_retries=-1
 max_overflow=20
+[notification]
+ack_on_event_error=true
+store_events=true
+[event]
+definitions_cfg_file=event_definitions.yaml
+drop_unmatched_notifications=true
+[hardware]
+store_events=True
 [publisher]
 metering_secret = {{METERING_SECRET}}
 [keystone_authtoken]

@@ -14,7 +14,7 @@
 {{ storage_interface }}_interface_up:
    cmd.run:
       - name: ifconfig {{ storage_interface }} up
-      - unless: ip addr show {{ storage_interface }}
+      - unless: ip addr show {{ storage_interface }} | grep -i up
 
 add-storage-interface-ip:
    cmd.run:

@@ -4,23 +4,12 @@ include:
 logstash-init:
    pkg.installed:
       - pkgs:
-        - elasticsearch
         - logstash
         - httpd
 
-/etc/elasticsearch/elasticsearch.yml:
+/etc/httpd/conf.d/kibana.conf:
    file.managed:
-      - source: salt://dev/openstack/logstash/templates/elasticsearch.yml
-      - mode: 644
-      - template: jinja
-      - defaults:
-        HOSTNAME: {{ grains['host'] }} 
-      - require:
-        - pkg: logstash-init
-
-/etc/sysconfig/elasticsearch:
-   file.managed:
-      - source: salt://dev/openstack/logstash/files/elasticsearch
+      - source: salt://dev/openstack/logstash/templates/kibana.conf.template
       - mode: 644
       - require:
         - pkg: logstash-init
@@ -73,8 +62,9 @@ kibana:
         - file: /tmp/kibana-3.1.2.tar.gz 
       - unless: test -d /var/www/html/kibana*
 
-/var/www/html/kibana:
+rename_kibana_dir:
    file.rename:
+      - name: /var/www/html/kibana
       - source: /var/www/html/kibana-3.1.2
       - force: True
       - require:
@@ -84,8 +74,24 @@ kibana:
    file.managed:
       - source: salt://dev/openstack/logstash/templates/config.js.template
       - template: jinja
+      - user: apache
+      - group: apache
       - defaults:
         VIP: {{ salt['pillar.get']('basic:pacemaker:VIP') }}
       - mode: 644
       - require:
-        - file: /var/www/html/kibana
+        - file: rename_kibana_dir 
+
+ch_kibana_owner:
+      file.directory:
+        - name: /var/www/html/kibana
+        - user: apache
+        - group: apache
+        - mode: 755
+        - recurse:
+          - user
+          - group
+          - mode
+        - require:
+          - file: rename_kibana_dir
+
