@@ -130,6 +130,14 @@ listen heat_api_cluster
       option  tcplog
       server {{ NODE_1 }} {{ NODE_1 }}:8004 check inter 2000 rise 2 fall 5
       server {{ NODE_2 }} {{ NODE_2 }}:8004 check inter 2000 rise 2 fall 5
+
+listen heat_app_api
+      bind {{ VIP_HOSTNAME }}:8001
+      balance  source
+      option  tcpka
+      option  tcplog
+      server {{ NODE_1 }} {{ NODE_1 }}:8001 check inter 2000 rise 2 fall 5
+      server {{ NODE_2 }} {{ NODE_2 }}:8001 check inter 2000 rise 2 fall 5
 {% endif %}
 {% if ENABLE_LOGSTASH -%}
 listen elasticsearch_api_cluster
@@ -141,12 +149,12 @@ listen elasticsearch_api_cluster
       server {{ NODE_2 }} {{ NODE_2 }}:9200 check inter 2000 rise 2 fall 5
 
 listen kibana_dashboard
-      bind {{ VIP_HOSTNAME }}:8000
+      bind {{ VIP_HOSTNAME }}:8002
       balance  source
       option  tcpka
       option  tcplog
-      server {{ NODE_1 }} {{ NODE_1 }}:8000 check inter 2000 rise 2 fall 5
-      server {{ NODE_2 }} {{ NODE_2 }}:8000 check inter 2000 rise 2 fall 5
+      server {{ NODE_1 }} {{ NODE_1 }}:8002 check inter 2000 rise 2 fall 5
+      server {{ NODE_2 }} {{ NODE_2 }}:8002 check inter 2000 rise 2 fall 5
 {% endif %}
 listen vnc_cluster
 	  bind {{ VIP_HOSTNAME }}:6080

@@ -36,6 +36,8 @@ basic:
       HOSTS: 
         gluster-1: 20.20.20.13
         gluster-2: 20.20.20.14
+        gluster-3: 20.20.20.6
+        gluster-4: 20.20.20.7
        
       NODES: node-14,node-13
       ENABLE_COMPUTE: True

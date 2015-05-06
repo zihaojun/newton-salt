@@ -6,7 +6,7 @@ glance-init:
          - dev.openstack.glance
 {% if salt['pillar.get']('basic:glance:IMAGE_BACKENDS','local') == 'glusterfs' %}
        - require:
-         - salt: glance-glusterfs-volume
+         - salt: glusterfs-volume
 {% endif %}
 
 glance-db-init:

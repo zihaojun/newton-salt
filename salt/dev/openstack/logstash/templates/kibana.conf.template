@@ -1,4 +1,4 @@
-<VirtualHost *:8000>
+<VirtualHost *:8002>
   ServerName www.kibana.com
   DocumentRoot /var/www/html
   Alias /kibana /var/www/html/kibana

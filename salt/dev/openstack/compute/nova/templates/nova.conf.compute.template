@@ -33,7 +33,7 @@ resume_guests_state_on_host_boot = True
 running_deleted_instance_action = reap
 
 instance_usage_audit=True
-instance_usage_audit_period=hour
+instance_usage_audit_period=month
 notify_on_state_change=vm_and_task_stat
 notification_driver = nova.openstack.common.notifier.rpc_notifier
 notification_driver = ceilometer.compute.nova_notifier

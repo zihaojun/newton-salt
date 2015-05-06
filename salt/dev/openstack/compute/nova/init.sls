@@ -68,7 +68,7 @@ nova-compute-init:
 {% if salt['pillar.get']('basic:nova:COMPUTE:INSTANCE_BACKENDS','local') == 'glusterfs' %}
 /{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}:
    mount.mounted:
-      - device: {{salt['pillar.get']('basic:glusterfs:VOLUME_NODE')}}:/{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}
+      - device: localhost:/{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}
       - fstype: glusterfs
       - mkmnt: True
       - opts: {{ salt['pillar.get']('basic:glusterfs:MOUNT_OPT') }}
