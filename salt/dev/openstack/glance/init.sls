@@ -43,10 +43,10 @@ glance-init:
 {% if salt['pillar.get']('basic:glance:IMAGE_BACKENDS','local') == 'glusterfs' %}
 /{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}:
    mount.mounted:
-      - device: {{salt['pillar.get']('basic:corosync:NODE_1')}}:/glance
+      - device: localhost:/{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}
       - fstype: glusterfs
       - mkmnt: True
-      - opts: {{ 'backup-volfile-servers=' + salt['pillar.get']('basic:corosync:NODE_2') }}
+      - opts: {{ salt['pillar.get']('basic:glusterfs:MOUNT_OPT') }}
 
 copy-glance-dir:
    cmd.run:
@@ -88,6 +88,6 @@ rmdir-glance-default:
       - mode: 755
       - template: jinja
       - defaults:
-        VOLUME_URL: {{ salt['pillar.get']('basic:corosync:NODE_1') + ':/glance -o backup-volfile-servers=' + salt['pillar.get']('basic:corosync:NODE_2' }}
+        VOLUME_URL: {{ salt['pillar.get']('basic:cinder:VOLUME_URL') }} 
         VOLUME_NAME: {{ salt['pillar.get']('basic:glusterfs:VOLUME_NAME') }} 
 {% endif %}

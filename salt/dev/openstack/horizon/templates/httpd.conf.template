@@ -1,6 +1,7 @@
 ServerRoot "/etc/httpd"
 Listen {{ HOSTNAME }}:80
-Listen {{ HOSTNAME }}:8000
+Listen {{ HOSTNAME }}:8002
+Listen {{ HOSTNAME }}:8001
 Include conf.modules.d/*.conf
 User apache
 Group apache
