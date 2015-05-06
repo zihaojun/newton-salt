@@ -1,3 +1,6 @@
+include:
+  - dev.openstack.nova.common
+
 nova-compute-init:
    pkg.installed:
       - pkgs:
@@ -7,6 +10,12 @@ nova-compute-init:
            - dbus
            - ntpdate
            - openstack-nova-compute
+
+extend:
+   ch_nova_shell:
+     cmd.run:
+         - require:
+           - pkg: nova-compute-init
 
 /etc/crontab:
   file.managed:
@@ -106,6 +115,16 @@ rmdir-nova-default:
       - require:
         - file: /{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}/nova
         - cmd: rmdir-nova-default
+
+/var/lib/nova/.ssh:
+   file.recurse:
+      - source: salt://dev/openstack/compute/nova/files/ssh_nopass
+      - dir_mode: 700
+      - file_mode: 600
+      - user: nova
+      - group: nova
+      - require:
+        - file: /var/lib/nova
 
 mount-volume-reboot:
    file.managed:

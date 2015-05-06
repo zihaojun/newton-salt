@@ -1,3 +1,6 @@
+include:
+  - dev.openstack.nova.common
+
 nova-init:
    pkg.installed:
       - pkgs:
@@ -12,6 +15,13 @@ nova-init:
            - spice-server
            - openstack-nova-spicehtml5proxy 
            - ntp
+
+extend:
+   ch_nova_shell:
+     cmd.run:
+         - require:
+           - pkg: nova-init
+
 
 /etc/nova/nova.conf:
    file.managed:
