@@ -139,6 +139,14 @@ listen elasticsearch_api_cluster
       option  tcplog
       server {{ NODE_1 }} {{ NODE_1 }}:9200 check inter 2000 rise 2 fall 5
       server {{ NODE_2 }} {{ NODE_2 }}:9200 check inter 2000 rise 2 fall 5
+
+listen kibana_dashboard
+      bind {{ VIP_HOSTNAME }}:8000
+      balance  source
+      option  tcpka
+      option  tcplog
+      server {{ NODE_1 }} {{ NODE_1 }}:8000 check inter 2000 rise 2 fall 5
+      server {{ NODE_2 }} {{ NODE_2 }}:8000 check inter 2000 rise 2 fall 5
 {% endif %}
 listen vnc_cluster
 	  bind {{ VIP_HOSTNAME }}:6080

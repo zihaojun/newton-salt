@@ -38,7 +38,7 @@ quota_cores = 120
 quota_instances = 30
 quota_ram = 512000
 
-rpc_backend = nova.openstack.common.rpc.impl_kombu
+rpc_backend = rabbit 
 network_api_class=nova.network.neutronv2.api.API
 
 linuxnet_interface_driver = nova.network.linux_net.LinuxOVSInterfaceDriver

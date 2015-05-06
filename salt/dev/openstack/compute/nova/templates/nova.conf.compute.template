@@ -18,7 +18,7 @@ linuxnet_interface_driver = nova.network.linux_net.LinuxOVSInterfaceDriver
 firewall_driver = nova.virt.firewall.NoopFirewallDriver
 security_group_api = neutron
 
-rpc_backend = nova.openstack.common.rpc.impl_kombu
+rpc_backend=rabbit 
 rabbit_hosts={{ VIP }}:5673
 rabbit_retry_interval=1
 rabbit_retry_backoff=2

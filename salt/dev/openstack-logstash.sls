@@ -13,4 +13,4 @@ logstash-service:
          - dev.openstack.logstash.service
        - require:
          - salt: logstash-init 
-
+         - salt: elasticsearch-service

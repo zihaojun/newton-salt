@@ -5,6 +5,15 @@ horizon-init:
        - sls:
          - dev.openstack.horizon
 
+animbus-db-init:
+   salt.state:
+       - tgt: {{ salt['pillar.get']('basic:mariadb:MASTER') }}
+       - sls:
+         - dev.openstack.horizon.db
+       - require:
+         - salt: horizon-init
+         - salt: galera-cluster-init
+
 openstack-add-haproxy:
    salt.state:
        - tgt: {{ salt['pillar.get']('basic:corosync:NODES') }}
@@ -12,7 +21,7 @@ openstack-add-haproxy:
        - sls:
          - dev.openstack.horizon.openstack-haproxy
        - require:
-         - salt: horizon-init
+         - salt: animbus-db-init
          - salt: glance-service
          - salt: nova-service
          - salt: neutron-service

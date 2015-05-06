@@ -135,9 +135,9 @@ keystone-roles:
     - internalurl:  http://{{ vip_hostname }}:8777
     - adminurl:     http://{{ vip_hostname }}:8777
 {% elif srv == 'heat' %}
-    - publicurl:    http://{{ vip_hostname }}:8004/v1/%\(tenant_id\)s  
-    - internalurl:  http://{{ vip_hostname }}:8004/v1/%\(tenant_id\)s
-    - adminurl:     http://{{ vip_hostname }}:8004/v1/%\(tenant_id\)s
+    - publicurl:    http://{{ vip_hostname }}:8004/v1/%(tenant_id)s  
+    - internalurl:  http://{{ vip_hostname }}:8004/v1/%(tenant_id)s
+    - adminurl:     http://{{ vip_hostname }}:8004/v1/%(tenant_id)s
 {% endif %}
     - region: regionOne
     - require:

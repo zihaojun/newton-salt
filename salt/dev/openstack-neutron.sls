@@ -4,6 +4,8 @@ neutron-init:
        - tgt_type: list
        - sls:
          - dev.openstack.neutron
+       - require:
+         - salt: galera-cluster-init
 
 neutron-db-init:
    salt.state:
@@ -12,7 +14,6 @@ neutron-db-init:
          - dev.openstack.neutron.db
        - require:
          - salt: neutron-init
-         - salt: galera-cluster-init
 
 neutron-service:
    salt.state:

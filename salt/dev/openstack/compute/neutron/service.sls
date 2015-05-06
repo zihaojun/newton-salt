@@ -16,14 +16,14 @@ openvswitch:
 {{ data_interface }}_interface_up:
    cmd.run:
       - name: ifconfig {{ data_interface }} up
-      - unless: ip addr show {{ data_interface }}
+      - unless: ip addr show {{ data_interface }} | grep -i up
 
 {% if data_interface != manage_interface %}
 add-data-interface-ip:
    cmd.run:
       - name: ifconfig {{ data_interface }} {{ '10.10.10.' + manage_ip[0].split('.')[3] }}/24
       - require:
-        - cmd: {{ data_interface }}_interface_up
+        - cmd: {{ data_interface }}_interface_up 
 {% endif %}
 
 {% for bridge in br_list %}

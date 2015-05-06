@@ -7,6 +7,7 @@
         VIP_HOSTNAME: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
         NODE_1: {{ salt['pillar.get']('basic:corosync:NODE_1') }}
         NODE_2: {{ salt['pillar.get']('basic:corosync:NODE_2') }}
+        ENABLE_LOGSTASH: {{ salt['pillar.get']('config_logstash_install',False) }}
    service.running:
       - name: haproxy
       - watch:

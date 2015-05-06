@@ -9,6 +9,9 @@ keystone-init:
          - salt: rabbitmq-init
          - salt: mariadb-init
          - salt: mongodb-init
+{% if salt['pillar.get']('config_logstash_install',False) %}
+         - salt: elasticsearch-init
+{% endif %}
 
 keystone-db-init:
    salt.state:

@@ -20,6 +20,15 @@ ceilometer-init:
         - defaults:
           COMMUNITY: {{ salt['pillar.get']('ceilometer:SNMP_COMMUNITY') }}
 
+/etc/ceilometer/event_definitions.yaml:
+    file.managed:
+        - source: salt://dev/openstack/ceilometer/files/event_definitions.yaml
+        - mode: 644
+        - user: ceilometer
+        - group: ceilometer
+        - require:
+          - pkg: ceilometer-init 
+
 /etc/ceilometer/ceilometer.conf:
     file.managed:
         - source: salt://dev/openstack/ceilometer/templates/ceilometer.conf.controller.template

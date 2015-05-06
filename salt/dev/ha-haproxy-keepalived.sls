@@ -30,7 +30,13 @@ haproxy-service:
         - dev.ha.haproxy.service
       - require:
         - salt: haproxy-keepalived
-
+        - salt: join-rabbitmq-cluster
+        - salt: join-galera-cluster
+        - salt: join-mongodb-cluster
+        - salt: memcache-init
+{% if salt['pillar.get']('config_logstash_install',False) %}
+        - salt: elasticsearch-service
+{% endif %}
 {% else %}
 crm-haproxy:
    salt.state:

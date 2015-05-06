@@ -3,6 +3,7 @@ interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
 ovs_use_veth = True
 use_namespaces = True
 external_network_bridge = br-ex
+allow_automatic_l3agent_failover = True
 l3_ha = True
 max_l3_agents_per_router = 2
 min_l3_agents_per_router = 2

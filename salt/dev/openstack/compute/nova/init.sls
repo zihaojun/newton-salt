@@ -5,6 +5,7 @@ nova-compute-init:
            - libvirt-python
            - libvirt-client
            - dbus
+           - ntpdate
            - openstack-nova-compute
 
 /etc/crontab:
