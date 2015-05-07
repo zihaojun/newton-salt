@@ -1,6 +1,0 @@
-heat:
-    MYSQL_HEAT_USER: heat
-    MYSQL_HEAT_PASS: heat
-    MYSQL_HEAT_DBNAME: heat
-    AUTH_ADMIN_HEAT_USER: heat
-    AUTH_ADMIN_HEAT_PASS: heat

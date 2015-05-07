@@ -6,5 +6,6 @@ input{
         password => "guest"
         exchange => "logstash-rabbitmq"
         durable => false 
+        queue => "logstash-queue"
     }
 }
