@@ -10,6 +10,7 @@ nova-compute-init:
            - dbus
            - ntpdate
            - openstack-nova-compute
+           - sysfsutils
 
 extend:
    ch_nova_shell:

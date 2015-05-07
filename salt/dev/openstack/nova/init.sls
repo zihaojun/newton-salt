@@ -14,7 +14,7 @@ nova-init:
            - python-novaclient
            - spice-server
            - openstack-nova-spicehtml5proxy 
-           - ntp
+           - sysfsutils
 
 extend:
    ch_nova_shell:
