@@ -4,3 +4,5 @@
 {% for host in salt['pillar.get']('basic:storage-common:NODES').split(',') %} 
             - {{host}}:{{ salt['pillar.get']('basic:glusterfs:BRICKS','/usr/gluster') }}
 {% endfor %}
+
+

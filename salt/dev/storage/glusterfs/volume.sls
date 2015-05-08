@@ -10,4 +10,3 @@ create-volume:
     - replica: {{ salt['pillar.get']('glusterfs:REPLICA',2) }}
     - transport: {{ salt['pillar.get']('glusterfs:TRANSPORT','tcp') }}
     - start: True 
-                             
