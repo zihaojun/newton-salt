@@ -10,3 +10,11 @@ create-volume:
     - replica: {{ salt['pillar.get']('glusterfs:REPLICA',2) }}
     - transport: {{ salt['pillar.get']('glusterfs:TRANSPORT','tcp') }}
     - start: True 
+
+set-volume-property:
+  glusterfs.set_volume_property:
+    - name: {{ salt['pillar.get']('basic:glusterfs:VOLUME_NAME','openstack') }}
+    - key: group
+    - value: virt
+    - require:
+      - glusterfs: create-volume
