@@ -5,6 +5,7 @@ horizon-init:
        - sls:
          - dev.openstack.horizon
 
+{% if salt['pillar.get']('basic:horizon:ANIMBUS_ENABLED') %}
 animbus-db-init:
    salt.state:
        - tgt: {{ salt['pillar.get']('basic:mariadb:MASTER') }}
@@ -13,6 +14,7 @@ animbus-db-init:
        - require:
          - salt: horizon-init
          - salt: galera-cluster-init
+{% endif %}
 
 openstack-add-haproxy:
    salt.state:
@@ -21,7 +23,9 @@ openstack-add-haproxy:
        - sls:
          - dev.openstack.horizon.openstack-haproxy
        - require:
+{% if salt['pillar.get']('basic:horizon:ANIMBUS_ENABLED') %}
          - salt: animbus-db-init
+{% endif %}
          - salt: glance-service
          - salt: nova-service
          - salt: neutron-service

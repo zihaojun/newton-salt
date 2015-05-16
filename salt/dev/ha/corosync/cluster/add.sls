@@ -7,7 +7,7 @@ crm-add-property:
    cmd.run:
       - names: 
 #         - crm configure property stonith-enabled=false
-         - crm configure property no-quorum-policy=ignore
+#         - crm configure property no-quorum-policy=ignore
          - crm configure property default-resource-stickiness=100
 
 {% if not salt['pillar.get']('haproxy:ENABLE_KEEPALIVED') %}
