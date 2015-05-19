@@ -6,7 +6,8 @@ horizon-init:
 {% if salt['pillar.get']('basic:horizon:ANIMBUS_ENABLED') %}
        - openstack-dashboard: 2014.2.3.99cloud-1.el7.centos 
 {% else %}
-       - openstack-dashboard: 2014.2.2-1.el7 
+       - python-django-horizon: 2014.2.2-1.el7
+       - openstack-dashboard: 2014.2.2-1.el7
 {% endif %}
 
 /etc/openstack-dashboard/local_settings:

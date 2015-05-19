@@ -80,6 +80,9 @@ basic:
    cinder:
       BACKENDS: glusterfs  # optional backends: glusterfs,local or cephonly support glusterfs now. 
       VOLUME_URL: localhost:/openstack -o backup-volfile-servers=node-6:node-7 # use ':' to seperate
-   
+
+   ceilometer:
+      BACKENDS: influxdb   # optional backends: influxdb or mongodb
+
    horizon:
       ANIMBUS_ENABLED: True

@@ -57,6 +57,15 @@ net.ipv4.ip_forward:
           AUTH_ADMIN_NEUTRON_USER: {{ salt['pillar.get']('neutron:AUTH_ADMIN_NEUTRON_USER') }}
           AUTH_ADMIN_NEUTRON_PASS: {{ salt['pillar.get']('neutron:AUTH_ADMIN_NEUTRON_PASS') }}
 
+/etc/neutron/dnsmasq-neutron.conf:
+     file.managed:
+        - source: salt://dev/openstack/neutron/files/dnsmasq-neutron.conf
+        - mode: 644
+        - user: neutron
+        - group: neutron
+        - require:
+          - pkg: neutron-init
+
 {% if data_interface != manage_interface %}
 /etc/sysconfig/network-scripts/ifcfg-{{data_interface}}:
    file.managed:

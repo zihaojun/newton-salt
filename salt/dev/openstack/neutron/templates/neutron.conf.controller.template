@@ -26,6 +26,7 @@ bind_host = {{IPADDR}}
 dhcp_agents_per_network = 2
 api_workers = 4
 rpc_workers = 4
+network_device_mtu = 1450
 
 dhcp_delete_namespaces = True
 router_delete_namespaces = True
