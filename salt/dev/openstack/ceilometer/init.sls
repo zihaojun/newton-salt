@@ -2,10 +2,21 @@ ceilometer-init:
    pkg.installed:
        - pkgs:
           - net-snmp
-          - openstack-ceilometer-api
-          - openstack-ceilometer-collector
-          - openstack-ceilometer-notification
-          - openstack-ceilometer-central
+{% if salt['pillar.get']('basic:horizon:ANIMBUS_ENABLED') %}
+          - python-ceilometer: 2014.2.3.99cloud-1.el7.centos
+          - openstack-ceilometer-common: 2014.2.3.99cloud-1.el7.centos
+          - openstack-ceilometer-api: 2014.2.3.99cloud-1.el7.centos 
+          - openstack-ceilometer-collector: 2014.2.3.99cloud-1.el7.centos
+          - openstack-ceilometer-notification: 2014.2.3.99cloud-1.el7.centos
+          - openstack-ceilometer-central: 2014.2.3.99cloud-1.el7.centos
+{% else %}
+          - python-ceilometer: 2014.2.1-1.el7.centos
+          - openstack-ceilometer-common: 2014.2.1-1.el7.centos
+          - openstack-ceilometer-api: 2014.2.1-1.el7.centos
+          - openstack-ceilometer-collector: 2014.2.1-1.el7.centos
+          - openstack-ceilometer-notification: 2014.2.1-1.el7.centos
+          - openstack-ceilometer-central: 2014.2.1-1.el7.centos
+{% endif %}
           - python-ceilometerclient
 
 /etc/snmp/snmpd.conf:
@@ -47,4 +58,4 @@ ceilometer-init:
           AUTH_ADMIN_CEILOMETER_USER: {{ salt['pillar.get']('ceilometer:AUTH_ADMIN_CEILOMETER_USER') }}
           AUTH_ADMIN_CEILOMETER_PASS: {{ salt['pillar.get']('ceilometer:AUTH_ADMIN_CEILOMETER_PASS') }}
           METERING_SECRET: {{ salt['pillar.get']('ceilometer:METERING_SECRET') }}
-
+          ANIMBUS_ENABLED: {{ salt['pillar.get']('basic:horizon:ANIMBUS_ENABLED') }}

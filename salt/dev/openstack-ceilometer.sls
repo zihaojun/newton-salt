@@ -13,6 +13,9 @@ ceilometer-db-init:
        - require:
          - salt: ceilometer-init
          - salt: mongodb-cluster-init 
+{% if salt['pillar.get']('basic:horizon:ANIMBUS_ENABLED',True) %}
+         - salt: influxdb-cluster-init
+{% endif %}
 
 ceilometer-service:
    salt.state:

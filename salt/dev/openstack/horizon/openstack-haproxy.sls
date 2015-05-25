@@ -11,6 +11,7 @@
         ENABLE_HEAT: {{ salt['pillar.get']('config_heat_install',False) }}
         ENABLE_CEILOMETER: {{ salt['pillar.get']('config_ceilometer_install',False) }}
         ENABLE_LOGSTASH: {{ salt['pillar.get']('config_logstash_install',False) }}
+        ENABLE_ANIMBUS: {{ salt['pillar.get']('basic:horizon:ANIMBUS_ENABLED',True) }}
    service.running:
       - name: haproxy
       - watch:

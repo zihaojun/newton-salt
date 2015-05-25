@@ -2,10 +2,14 @@ include:
    - dev.openstack-hosts
    - dev.ha-ntp
    - dev.openstack-storage
+{% if salt['pillar.get']('basic:nova:COMPUTE:ADD_NODE_ENABLED',True) %}
    - dev.ha-memcache
    - dev.ha-rabbitmq
    - dev.ha-mariadb
    - dev.ha-mongodb
+{% if salt['pillar.get']('basic:horizon:ANIMBUS_ENABLED',True) %}
+   - dev.ha-influxdb
+{% endif %}
 {% if salt['pillar.get']('config_logstash_install',False) %}
    - dev.ha-elasticsearch
 {% endif %}
@@ -28,6 +32,7 @@ include:
    - dev.openstack-logstash
 {% endif %}
    - dev.openstack-horizon
+{% endif %}
 {% if salt['pillar.get']('config_compute_install',False) %}
    - dev.openstack-nova-compute
    - dev.openstack-neutron-compute

@@ -31,3 +31,9 @@ ANIMBUS_PRICES = {
 ANIMBUS_HEAT_STACK = {
     'enable_user_pass': False,
 }
+
+INFLUXDB_HOST = "{{VIP}}"
+INFLUXDB_PORT = 8086
+INFLUXDB_USERNAME = 'root'
+INFLUXDB_PASSWORD = 'root'
+INFLUXDB_DATABASE = 'ceilometer'

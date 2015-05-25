@@ -1,6 +1,7 @@
 {% set storage_interface = salt['pillar.get']('basic:storage-common:STORAGE_INTERFACE') %}
 {% set manage_interface = salt['pillar.get']('basic:neutron:MANAGE_INTERFACE') %}
 {% set manage_ip = grains['ip_interfaces'].get(manage_interface,'') %}
+{% from 'dev/storage/var.sls' import storage_net_prefix with context %}
 
 /etc/sysconfig/network-scripts/ifcfg-{{storage_interface}}:
    file.managed:
@@ -9,7 +10,7 @@
       - template: jinja
       - defaults:
         STORAGE_INTERFACE: {{ storage_interface }}
-        STORAGE_IP: {{ '20.20.20.' + manage_ip[0].split('.')[3] }}
+        STORAGE_IP: {{ storage_net_prefix + '.' + manage_ip[0].split('.')[3] }}
 
 {{ storage_interface }}_interface_up:
    cmd.run:
@@ -18,6 +19,6 @@
 
 add-storage-interface-ip:
    cmd.run:
-      - name: ifconfig {{ storage_interface }} {{ '20.20.20.' + manage_ip[0].split('.')[3] }}/24
+      - name: ifconfig {{ storage_interface }} {{ storage_net_prefix + '.' + manage_ip[0].split('.')[3] }}/24
       - require:
         - cmd: {{ storage_interface }}_interface_up

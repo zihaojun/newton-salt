@@ -2,11 +2,11 @@
 
 from influxdb import InfluxDBClient
 
-INFLUXDB_HOST = 'localhost'
+INFLUXDB_HOST = "{{ IPADDR }}" 
 INFLUXDB_PORT = 8086
 INFLUXDB_USERNAME = 'root'
 INFLUXDB_PASSWORD = 'root'
-INFLUXDB_DATABASE = 'test2'
+INFLUXDB_DATABASE = 'ceilometer'
 
 client = InfluxDBClient(
        INFLUXDB_HOST,

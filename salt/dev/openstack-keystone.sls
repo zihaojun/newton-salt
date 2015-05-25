@@ -12,6 +12,9 @@ keystone-init:
 {% if salt['pillar.get']('config_logstash_install',False) %}
          - salt: elasticsearch-init
 {% endif %}
+{% if salt['pillar.get']('basic:horizon:ANIMBUS_ENABLED',True) %}
+         - salt: influxdb-init
+{% endif %}
 
 keystone-db-init:
    salt.state:

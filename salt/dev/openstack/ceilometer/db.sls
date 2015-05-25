@@ -8,3 +8,13 @@ salt://dev/openstack/ceilometer/files/ceilometer_mongodb_user.sh:
           MONGODB_CEILOMETER_PASS: {{ salt['pillar.get']('ceilometer:MONGODB_CEILOMETER_PASS') }}
         - env:
           - BATCH: 'yes'
+
+{% if salt['pillar.get']('basic:horizon:ANIMBUS_ENABLED',True) %}
+salt://dev/openstack/ceilometer/files/influxdb_init.py:
+    cmd.script:
+        - template: jinja
+        - defaults:
+          IPADDR: {{ grains['host'] }}
+        - env:
+          - BATCH: 'yes'
+{% endif %}

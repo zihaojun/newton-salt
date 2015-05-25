@@ -46,7 +46,7 @@ interactive_timeout = 28800
 wait_timeout = 28800
 
 wsrep_provider=/usr/lib64/galera/libgalera_smm.so
-wsrep_provider_options="pc.ignore_sb=false; gmcast.listen_addr=tcp://{{HOSTNAME}}:4567;gcs.fc_limit = 256; gcs.fc_factor = 0.99; gcs.fc_master_slave=yes"
+wsrep_provider_options="pc.ignore_quorum = true; pc.ignore_sb=false; gmcast.listen_addr=tcp://{{HOSTNAME}}:4567;gcs.fc_limit = 256; gcs.fc_factor = 0.99; gcs.fc_master_slave=yes"
 {% if MASTER_ENABLED -%}
 wsrep_cluster_address=gcomm://
 {% else %}

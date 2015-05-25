@@ -2,7 +2,7 @@ config_cinder_install: True
 config_heat_install: True 
 config_ceilometer_install: True
 config_logstash_install: True
-config_compute_install: False 
+config_compute_install: True 
 
 keystone.endpoint: 'http://node-6:35357/v2.0'
 
@@ -16,6 +16,10 @@ basic:
       SLAVE: node-7
  
    mongodb:
+      MASTER: node-6
+      SLAVE: node-7
+
+   influxdb:
       MASTER: node-6
       SLAVE: node-7
 
@@ -34,12 +38,14 @@ basic:
 
    storage-common:
       HOSTS: 
-        gluster-1: 20.20.20.13
-        gluster-2: 20.20.20.14
-        gluster-3: 20.20.20.6
-        gluster-4: 20.20.20.7
+        gluster-1: 172.16.100.13
+        gluster-2: 172.16.100.14
+        gluster-3: 172.16.100.6
+        gluster-4: 172.16.100.7
        
       NODES: node-14,node-13
+      STORAGE_HOSTNAME_PREFIX: node-
+      STORAGE_NET: 172.16.100.0
       ENABLE_COMPUTE: True
       ADD_NODE_ENABLED: False
       STORAGE_INTERFACE: eth2
@@ -78,11 +84,8 @@ basic:
       MANAGE_INTERFACE: eth0
 
    cinder:
-      BACKENDS: glusterfs  # optional backends: glusterfs,local or cephonly support glusterfs now. 
+      BACKENDS: glusterfs  # optional backends: glusterfs,local or ceph.only support glusterfs now.
       VOLUME_URL: localhost:/openstack -o backup-volfile-servers=node-6:node-7 # use ':' to seperate
-
-   ceilometer:
-      BACKENDS: influxdb   # optional backends: influxdb or mongodb
 
    horizon:
       ANIMBUS_ENABLED: True

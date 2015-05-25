@@ -2,9 +2,18 @@ ceilometer-compute-init:
    pkg.installed:
       - pkgs:
          - net-snmp
-         - openstack-ceilometer-compute
-         - python-ceilometerclient
+{% if salt['pillar.get']('basic:horizon:ANIMBUS_ENABLED') %}
+         - python-ceilometer: 2014.2.3.99cloud-1.el7.centos
+         - openstack-ceilometer-common: 2014.2.3.99cloud-1.el7.centos
+         - openstack-ceilometer-compute: 2014.2.3.99cloud-1.el7.centos
+{% else %}
+         - python-ceilometer: 2014.2.1-1.el7.centos 
+         - openstack-ceilometer-common: 2014.2.1-1.el7.centos 
+         - openstack-ceilometer-compute: 2014.2.1-1.el7.centos 
+{% endif %}
          - python-pecan
+         - python-ceilometerclient
+
 
 /etc/snmp/snmpd.conf:
     file.managed:
@@ -32,4 +41,3 @@ ceilometer-compute-init:
           AUTH_ADMIN_CEILOMETER_USER: {{ salt['pillar.get']('ceilometer:AUTH_ADMIN_CEILOMETER_USER') }}
           AUTH_ADMIN_CEILOMETER_PASS: {{ salt['pillar.get']('ceilometer:AUTH_ADMIN_CEILOMETER_PASS') }}
           METERING_SECRET: {{ salt['pillar.get']('ceilometer:METERING_SECRET') }}
-          

@@ -37,6 +37,9 @@ haproxy-service:
 {% if salt['pillar.get']('config_logstash_install',False) %}
         - salt: elasticsearch-service
 {% endif %}
+{% if salt['pillar.get']('basic:horizon:ANIMBUS_ENABLED',True) %}
+        - salt: influxdb-cluster-init
+{% endif %}
 {% else %}
 crm-haproxy:
    salt.state:

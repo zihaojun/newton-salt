@@ -20,6 +20,14 @@ use_tpool=True
 max_pool_size=10
 max_retries=-1
 max_overflow=20
+{% if ANIMBUS_ENABLED -%}
+[influxdb]
+influxdb_host={{VIP}}
+influxdb_port=8086
+influxdb_username=root
+influxdb_password=root
+influxdb_database=ceilometer
+{% endif %}
 [notification]
 ack_on_event_error=true
 store_events=true
