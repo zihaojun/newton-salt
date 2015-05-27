@@ -2,7 +2,7 @@ include:
    - dev.openstack-hosts
    - dev.ha-ntp
    - dev.openstack-storage
-{% if salt['pillar.get']('basic:nova:COMPUTE:ADD_NODE_ENABLED',True) %}
+{% if not salt['pillar.get']('basic:nova:COMPUTE:ADD_NODE_ENABLED',True) %}
    - dev.ha-memcache
    - dev.ha-rabbitmq
    - dev.ha-mariadb

@@ -64,6 +64,9 @@ notification_driver = ceilometer.compute.nova_notifier
 vif_plugging_timeout = 10
 vif_plugging_is_fatal = False
 
+[glance]
+api_servers={{ VIP }}:9292
+
 [conductor]
 workers = 20
 

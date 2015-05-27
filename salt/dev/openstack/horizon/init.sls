@@ -35,6 +35,11 @@ horizon-init:
        - template: jinja
        - defaults:
          VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }} 
+         INFLUXDB_CEILOMETER_USER: {{ salt['pillar.get']('basic:ceilometer:INFLUXDB_CEILOMETER_USER') }} 
+         INFLUXDB_CEILOMETER_PASS: {{ salt['pillar.get']('basic:ceilometer:INFLUXDB_CEILOMETER_PASS') }}
+         INFLUXDB_CEILOMETER_DBNAME: {{ salt['pillar.get']('basic:ceilometer:INFLUXDB_CEILOMETER_DBNAME') }}
+         ADMIN_USER: {{ salt['pillar.get']('basic:keystone:ADMIN_USER') }}
+         ADMIN_PASS: {{ salt['pillar.get']('basic:keystone:ADMIN_PASS') }}
        - require:
          - pkg: horizon-init
 {% else %}

@@ -15,6 +15,9 @@ salt://dev/openstack/ceilometer/files/influxdb_init.py:
         - template: jinja
         - defaults:
           IPADDR: {{ grains['host'] }}
+          INFLUXDB_CEILOMETER_USER: {{ salt['pillar.get']('ceilometer:INFLUXDB_CEILOMETER_USER') }}
+          INFLUXDB_CEILOMETER_PASS: {{ salt['pillar.get']('ceilometer:INFLUXDB_CEILOMETER_PASS') }}
+          INFLUXDB_CEILOMETER_DBNAME: {{ salt['pillar.get']('ceilometer:INFLUXDB_CEILOMETER_DBNAME') }}
         - env:
           - BATCH: 'yes'
 {% endif %}

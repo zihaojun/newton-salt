@@ -2,7 +2,6 @@
 debug=false
 verbose=True
 #image_cache_directory_name = /base-image
-glance_api_servers={{ VIP }}:9292
 vnc_enabled = {{ VNC_ENABLED }}
 {% if VNC_ENABLED -%}
 vncserver_listen = 0.0.0.0 
@@ -12,6 +11,8 @@ novncproxy_host = {{IPADDR}}
 {% endif %}
 auth_strategy = keystone
 api_paste_config=/etc/nova/api-paste.ini
+allow_resize_to_same_host = True
+allow_migrate_to_same_host = True
 
 network_api_class=nova.network.neutronv2.api.API
 linuxnet_interface_driver = nova.network.linux_net.LinuxOVSInterfaceDriver
@@ -39,6 +40,9 @@ notification_driver = nova.openstack.common.notifier.rpc_notifier
 notification_driver = ceilometer.compute.nova_notifier
 vif_plugging_timeout = 10
 vif_plugging_is_fatal = False
+
+[glance]
+api_servers={{ VIP }}:9292
 
 [neutron]
 url=http://{{ VIP }}:9696
