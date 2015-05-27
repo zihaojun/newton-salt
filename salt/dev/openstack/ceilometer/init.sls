@@ -3,12 +3,12 @@ ceilometer-init:
        - pkgs:
           - net-snmp
 {% if salt['pillar.get']('basic:horizon:ANIMBUS_ENABLED') %}
-          - python-ceilometer: 2014.2.3.99cloud-1.el7.centos
-          - openstack-ceilometer-common: 2014.2.3.99cloud-1.el7.centos
-          - openstack-ceilometer-api: 2014.2.3.99cloud-1.el7.centos 
-          - openstack-ceilometer-collector: 2014.2.3.99cloud-1.el7.centos
-          - openstack-ceilometer-notification: 2014.2.3.99cloud-1.el7.centos
-          - openstack-ceilometer-central: 2014.2.3.99cloud-1.el7.centos
+          - python-ceilometer: v3.1-1.el7.centos
+          - openstack-ceilometer-common: v3.1-1.el7.centos
+          - openstack-ceilometer-api: v3.1-1.el7.centos 
+          - openstack-ceilometer-collector: v3.1-1.el7.centos
+          - openstack-ceilometer-notification: v3.1-1.el7.centos
+          - openstack-ceilometer-central: v3.1-1.el7.centos
 {% else %}
           - python-ceilometer: 2014.2.1-1.el7.centos
           - openstack-ceilometer-common: 2014.2.1-1.el7.centos

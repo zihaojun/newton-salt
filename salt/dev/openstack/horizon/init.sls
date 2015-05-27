@@ -5,8 +5,8 @@ horizon-init:
        - mod_wsgi
 {% if salt['pillar.get']('basic:horizon:ANIMBUS_ENABLED') %}
        - python-influxdb 
-       - python-django-horizon: 2014.2.3.99cloud-1.el7.centos
-       - openstack-dashboard: 2014.2.3.99cloud-1.el7.centos 
+       - python-django-horizon: v3.1-1.el7.centos
+       - openstack-dashboard: v3.1-1.el7.centos 
 {% else %}
        - python-django-horizon: 2014.2.2-1.el7
        - openstack-dashboard: 2014.2.2-1.el7
