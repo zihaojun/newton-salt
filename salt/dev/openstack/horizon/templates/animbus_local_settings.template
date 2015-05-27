@@ -37,3 +37,17 @@ INFLUXDB_PORT = 8086
 INFLUXDB_USERNAME = 'root'
 INFLUXDB_PASSWORD = 'root'
 INFLUXDB_DATABASE = 'ceilometer'
+
+# add the STORAGE_PATH to ANIMBUS_STORAGE_PATH
+#ANIMBUS_STORAGE_PATH = (
+#    '/openstack/nova',
+#    '/openstack/cinder',
+#)
+
+EMAIL_HOST = 'smtp.126.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'ziyu031@126.com'
+EMAIL_HOST_PASSWORD = '2620365'
+
+KEYSTONE_ADMIN_USER = 'admin'
+KEYSTONE_ADMIN_PASSWORD = 'admin'
