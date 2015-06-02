@@ -47,6 +47,7 @@ glance-init:
       - fstype: glusterfs
       - mkmnt: True
       - opts: {{ salt['pillar.get']('basic:glusterfs:MOUNT_OPT') }}
+      - persist: False
 
 copy-glance-dir:
    cmd.run:
