@@ -16,3 +16,13 @@ slave-my-cnf:
        - enable: True
        - watch:
          - file: slave-my-cnf
+
+/etc/init.d/galera:
+    file.managed:
+       - source: salt://dev/ha/mariadb/templates/galera.template
+       - mode: 755
+       - template: jinja
+       - defaults:
+         HOSTNAME: {{ salt['pillar.get']('basic:corosync:NODE_1') }}
+         SST_USER: {{ pillar['mariadb'].get('SST_USER') }}
+         SST_PASS: {{ pillar['mariadb'].get('SST_PASS') }}

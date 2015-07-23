@@ -23,4 +23,6 @@ neutron-service:
          - dev.openstack.neutron.service
        - require:
          - salt: neutron-db-init
+{% if salt['pillar.get']('config_ha_install',False) %}
          - salt: keystone-add-haproxy
+{% endif %}

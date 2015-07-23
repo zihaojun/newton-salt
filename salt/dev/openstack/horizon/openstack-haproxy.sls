@@ -16,3 +16,9 @@
       - name: haproxy
       - watch:
         - file: /etc/haproxy/haproxy.cfg
+
+keepalived:
+    service.running:
+      - watch:
+        - file: /etc/haproxy/haproxy.cfg
+        - service: /etc/haproxy/haproxy.cfg

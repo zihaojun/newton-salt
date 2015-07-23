@@ -4,7 +4,9 @@ nova-compute-init:
        - tgt_type: list 
        - sls:
          - dev.openstack.compute.nova
-{% if salt['pillar.get']('basic:nova:COMPUTE:INSTANCE_BACKENDS','local') == 'glusterfs' and not salt['pillar.get']('basic:storage-common:ADD_NODE_ENABLED',False) %}
+{% if salt['pillar.get']('config_storage_install',True) and 
+      salt['pillar.get']('basic:nova:COMPUTE:INSTANCE_BACKENDS','local') == 'glusterfs' and 
+      not salt['pillar.get']('basic:storage-common:ADD_NODE_ENABLED',False) %}
        - require:
          - salt: glusterfs-volume
 {% endif %}

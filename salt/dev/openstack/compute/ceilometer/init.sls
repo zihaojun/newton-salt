@@ -1,11 +1,13 @@
+{% set ceilometer_version = salt['cmd.run']("yum list | awk '/ceilometer-api/ {for(i=1;i<=NF;i++) if($i ~ /(v3.1)/)  print $i }'") %}
+
 ceilometer-compute-init:
    pkg.installed:
       - pkgs:
          - net-snmp
 {% if salt['pillar.get']('basic:horizon:ANIMBUS_ENABLED') %}
-         - python-ceilometer: v3.1-1.el7.centos
-         - openstack-ceilometer-common: v3.1-1.el7.centos
-         - openstack-ceilometer-compute: v3.1-1.el7.centos
+         - python-ceilometer: {{ ceilometer_version }} 
+         - openstack-ceilometer-common: {{ ceilometer_version }}
+         - openstack-ceilometer-compute: {{ ceilometer_version }}
 {% else %}
          - python-ceilometer: 2014.2.1-1.el7.centos 
          - openstack-ceilometer-common: 2014.2.1-1.el7.centos 
@@ -27,17 +29,3 @@ ceilometer-compute-init:
         - defaults:
           COMMUNITY: {{ salt['pillar.get']('ceilometer:SNMP_COMMUNITY','') }}
 
-/etc/ceilometer/ceilometer.conf:
-    file.managed:
-        - source: salt://dev/openstack/compute/ceilometer/templates/ceilometer.conf.compute.template
-        - mode: 644
-        - user: ceilometer
-        - group: ceilometer
-        - require:
-          - pkg: ceilometer-compute-init
-        - template: jinja
-        - defaults:
-          VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
-          AUTH_ADMIN_CEILOMETER_USER: {{ salt['pillar.get']('ceilometer:AUTH_ADMIN_CEILOMETER_USER') }}
-          AUTH_ADMIN_CEILOMETER_PASS: {{ salt['pillar.get']('ceilometer:AUTH_ADMIN_CEILOMETER_PASS') }}
-          METERING_SECRET: {{ salt['pillar.get']('ceilometer:METERING_SECRET') }}

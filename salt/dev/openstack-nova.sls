@@ -22,4 +22,6 @@ nova-service:
          - dev.openstack.nova.service
        - require:
          - salt: nova-db-init
+{% if salt['pillar.get']('config_ha_install',False) %}
          - salt: keystone-add-haproxy
+{% endif %}

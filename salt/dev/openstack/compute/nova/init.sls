@@ -26,7 +26,11 @@ extend:
    - mode: 644
    - template: jinja
    - defaults:
+{% if salt['pillar.get']('config_ha_install',False) %}
      VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }} 
+{% else %}
+     VIP: {{ salt['pillar.get']('basic:corosync:NODE_1') }}
+{% endif %}
 
 /etc/libvirt/qemu.conf:
    file.managed:
@@ -53,43 +57,24 @@ extend:
        - require:
          - pkg: nova-compute-init
 
-/etc/nova/nova.conf:
-   file.managed:
-        - source: salt://dev/openstack/compute/nova/templates/nova.conf.compute.template
-        - mode: 644
-        - user: nova
-        - group: nova
-        - require:
-          - pkg: nova-compute-init
-        - template: jinja
-        - defaults:
-          IPADDR: {{ grains['host'] }}
-          VIP: {{ salt['pillar.get']('basic:pacemaker:VIP') }}
-          VNC_ENABLED: {{ salt['pillar.get']('nova:VNC_ENABLED') }}
-          MYSQL_NOVA_USER: {{ salt['pillar.get']('nova:MYSQL_NOVA_USER') }}
-          MYSQL_NOVA_PASS: {{ salt['pillar.get']('nova:MYSQL_NOVA_PASS') }}
-          MYSQL_NOVA_DBNAME: {{ salt['pillar.get']('nova:MYSQL_NOVA_DBNAME') }}
-          AUTH_ADMIN_NOVA_USER: {{ salt['pillar.get']('nova:AUTH_ADMIN_NOVA_USER') }}
-          AUTH_ADMIN_NOVA_PASS: {{ salt['pillar.get']('nova:AUTH_ADMIN_NOVA_PASS') }}
-          METADATA_PROXY_SECRET: {{ salt['pillar.get']('nova:METADATA_PROXY_SECRET') }} 
-          AUTH_ADMIN_NEUTRON_USER: {{ salt['pillar.get']('neutron:AUTH_ADMIN_NEUTRON_USER') }}
-          AUTH_ADMIN_NEUTRON_PASS: {{ salt['pillar.get']('neutron:AUTH_ADMIN_NEUTRON_PASS') }}
 
-{% if salt['pillar.get']('basic:nova:COMPUTE:INSTANCE_BACKENDS','local') == 'glusterfs' %}
-/{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}:
+{% if salt['pillar.get']('config_storage_install',True) and
+      salt['pillar.get']('basic:nova:COMPUTE:INSTANCE_BACKENDS','local') == 'glusterfs' %}
+/{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}_gfs:
    mount.mounted:
       - device: localhost:/{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}
       - fstype: glusterfs
       - mkmnt: True
+      - persist: False
       - opts: {{ salt['pillar.get']('basic:glusterfs:MOUNT_OPT') }}
       - persist: False
 
 copy-nova-dir:
    cmd.run:
-      - name: cp -r /var/lib/nova /{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}/
+      - name: cp -r /var/lib/nova /{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}_gfs/
       - unless: test -h /var/lib/nova
       - require:
-        - mount: /{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}
+        - mount: /{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}_gfs
 
 rmdir-nova-default:
    cmd.run:
@@ -98,7 +83,7 @@ rmdir-nova-default:
       - require:
         - cmd: copy-nova-dir
 
-/{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}/nova:
+/{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}_gfs/nova:
    file.directory:
       - user: nova
       - group: nova
@@ -113,9 +98,9 @@ rmdir-nova-default:
 
 /var/lib/nova:
    file.symlink:
-      - target: /{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}/nova 
+      - target: /{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}_gfs/nova 
       - require:
-        - file: /{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}/nova
+        - file: /{{salt['pillar.get']('basic:glusterfs:VOLUME_NAME')}}_gfs/nova
         - cmd: rmdir-nova-default
 
 /var/lib/nova/.ssh:
@@ -128,13 +113,9 @@ rmdir-nova-default:
       - require:
         - file: /var/lib/nova
 
-mount-volume-reboot:
-   file.managed:
-      - name: /etc/rc.d/rc.local
-      - source: salt://dev/openstack/compute/nova/templates/rc.local.template
-      - mode: 755
-      - template: jinja
-      - defaults: 
-        VOLUME_URL: {{ salt['pillar.get']('basic:cinder:VOLUME_URL') }}
-        VOLUME_NAME: {{ salt['pillar.get']('basic:glusterfs:VOLUME_NAME') }}
+/etc/rc.d/rc.local:
+   file.append:
+     - text:
+       - mount -t glusterfs localhost:/{{ salt['pillar.get']('basic:glusterfs:VOLUME_NAME') }}
+         /{{ salt['pillar.get']('basic:glusterfs:VOLUME_NAME') }}_gfs
 {% endif %}

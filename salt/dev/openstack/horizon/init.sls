@@ -1,3 +1,4 @@
+{% set horizon_version = salt['cmd.run']("yum list | awk '/openstack-dashboard/ {for(i=1;i<=NF;i++) if($i ~ /(v3.1)/)  print $i }'") %}
 horizon-init:
    pkg.installed:
      - pkgs:
@@ -5,8 +6,8 @@ horizon-init:
        - mod_wsgi
 {% if salt['pillar.get']('basic:horizon:ANIMBUS_ENABLED') %}
        - python-influxdb 
-       - python-django-horizon: v3.1-1.el7.centos
-       - openstack-dashboard: v3.1-1.el7.centos 
+       - python-django-horizon: {{ horizon_version }}
+       - openstack-dashboard: {{ horizon_version }}
 {% else %}
        - python-django-horizon: 2014.2.2-1.el7
        - openstack-dashboard: 2014.2.2-1.el7
@@ -21,7 +22,11 @@ horizon-init:
        - template: jinja
        - defaults:
          IPADDR: {{ grains['host'] }}
+{% if salt['pillar.get']('config_ha_install',False) %}
          VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
+{% else %}
+         VIP: {{ grains['host'] }}
+{% endif %}
        - require:
          - pkg: horizon-init
 
@@ -34,12 +39,18 @@ horizon-init:
        - group: apache
        - template: jinja
        - defaults:
-         VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }} 
-         INFLUXDB_CEILOMETER_USER: {{ salt['pillar.get']('basic:ceilometer:INFLUXDB_CEILOMETER_USER') }} 
-         INFLUXDB_CEILOMETER_PASS: {{ salt['pillar.get']('basic:ceilometer:INFLUXDB_CEILOMETER_PASS') }}
-         INFLUXDB_CEILOMETER_DBNAME: {{ salt['pillar.get']('basic:ceilometer:INFLUXDB_CEILOMETER_DBNAME') }}
-         ADMIN_USER: {{ salt['pillar.get']('basic:keystone:ADMIN_USER') }}
-         ADMIN_PASS: {{ salt['pillar.get']('basic:keystone:ADMIN_PASS') }}
+{% if salt['pillar.get']('config_ha_install',False) %}
+         VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
+         INFLUXDB_PORT: {{ '8087' }}
+{% else %}
+         VIP: {{ grains['host'] }}
+         INFLUXDB_PORT: {{ '8086' }}
+{% endif %}
+         INFLUXDB_CEILOMETER_USER: {{ salt['pillar.get']('ceilometer:INFLUXDB_CEILOMETER_USER') }} 
+         INFLUXDB_CEILOMETER_PASS: {{ salt['pillar.get']('ceilometer:INFLUXDB_CEILOMETER_PASS') }}
+         INFLUXDB_CEILOMETER_DBNAME: {{ salt['pillar.get']('ceilometer:INFLUXDB_CEILOMETER_DBNAME') }}
+         ADMIN_USER: {{ salt['pillar.get']('keystone:ADMIN_USER') }}
+         ADMIN_PASS: {{ salt['pillar.get']('keystone:ADMIN_PASS') }}
        - require:
          - pkg: horizon-init
 {% else %}

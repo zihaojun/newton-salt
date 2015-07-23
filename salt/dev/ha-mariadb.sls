@@ -23,7 +23,7 @@ galera-cluster-init:
        - dev.ha.mariadb.cluster
      - require:
        - salt: create-sst-user
-
+{% if salt['pillar.get']('config_ha_install',False) %}
 join-galera-cluster:
   salt.state:
      - tgt: {{ salt['pillar.get']('basic:mariadb:SLAVE') }}
@@ -31,3 +31,4 @@ join-galera-cluster:
        - dev.ha.mariadb.cluster.add
      - require:
        - salt: galera-cluster-init
+{% endif %}

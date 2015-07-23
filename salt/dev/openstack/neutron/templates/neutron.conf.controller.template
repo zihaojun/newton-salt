@@ -4,7 +4,9 @@ state_path = /var/lib/neutron
 lock_path = $state_path/lock
 
 rpc_backend = neutron.openstack.common.rpc.impl_kombu
-rabbit_hosts={{VIP}}:5673
+rabbit_hosts={{ RABBIT }}
+rabbit_userid={{ RABBIT_USER }}
+rabbit_password={{ RABBIT_PASS }}
 rabbit_retry_interval=1
 rabbit_retry_backoff=2
 rabbit_max_retries=0

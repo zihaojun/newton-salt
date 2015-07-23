@@ -5,7 +5,8 @@ cinder-init:
          - python-cinderclient
          - python-oslo-db
          - targetcli
-{% if salt['pillar.get']('basic:cinder:BACKENDS') == 'glusterfs' %}
+{% if salt['pillar.get']('config_storage_install',True) and 
+      salt['pillar.get']('basic:cinder:BACKENDS') == 'glusterfs' %}
          - glusterfs
          - glusterfs-libs
          - glusterfs-fuse
@@ -22,23 +23,28 @@ cinder-init:
           VOLUME_URL: {{ salt['pillar.get']('basic:cinder:VOLUME_URL') }}
         - require:
           - pkg: cinder-init
+
+{% elif salt['pillar.get']('basic:cinder:BACKENDS') == 'lvm' %}
+salt://dev/openstack/cinder/files/cinder-volumes.sh:
+    cmd.script:
+        - require:
+          - pkg: cinder-init
 {% endif %}
 
-/etc/cinder/cinder.conf:
-    file.managed:
-        - source: salt://dev/openstack/cinder/templates/cinder.conf.template
-        - mode: 644
-        - user: cinder
-        - group: cinder
+
+salt://dev/openstack/cinder/files/cinder-db.sh:
+    cmd.script:
         - template: jinja
+        - require:
+          - pkg: cinder-init
         - defaults:
-          IPADDR: {{ grains['host'] }}
+{% if salt['pillar.get']('config_ha_install',False) %}
           VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
-          BACKENDS: {{ salt['pillar.get']('basic:cinder:BACKENDS') }}
+{% else %}
+          VIP: {{ grains['host'] }}
+{% endif %}
           MYSQL_CINDER_USER: {{ salt['pillar.get']('cinder:MYSQL_CINDER_USER') }}
           MYSQL_CINDER_PASS: {{ salt['pillar.get']('cinder:MYSQL_CINDER_PASS') }}
           MYSQL_CINDER_DBNAME: {{ salt['pillar.get']('cinder:MYSQL_CINDER_DBNAME') }}
-          AUTH_ADMIN_CINDER_USER: {{ salt['pillar.get']('cinder:AUTH_ADMIN_CINDER_USER') }}
-          AUTH_ADMIN_CINDER_PASS: {{ salt['pillar.get']('cinder:AUTH_ADMIN_CINDER_PASS') }}
-        - require:
-          - pkg: cinder-init
+        - env:
+          - BATCH: 'yes'

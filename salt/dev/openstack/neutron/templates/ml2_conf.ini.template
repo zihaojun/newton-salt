@@ -19,7 +19,9 @@ vxlan_group = 239.1.1.1
 {% endif %}
 [agent]
 l2_population = True
+{% if NEUTRON_NETWORK_TYPE != 'vlan' -%}
 tunnel_types = {{NEUTRON_NETWORK_TYPE}}
+{% endif %}
 [ovs]
 {% if NEUTRON_NETWORK_TYPE == 'gre' or NEUTRON_NETWORK_TYPE == 'vxlan' -%}
 enable_tunneling = True
@@ -28,7 +30,7 @@ enable_tunneling = False
 {% endif %}
 integration_bridge = br-int
 {% if NEUTRON_NETWORK_TYPE == 'vlan' -%}
-bridge_mappings = physnet1:br-data
+bridge_mappings = default:bond-br
 {% endif %}
 {% if NEUTRON_NETWORK_TYPE == 'gre' or NEUTRON_NETWORK_TYPE == 'vxlan' -%}
 tunnel_type = {{ NEUTRON_NETWORK_TYPE }}

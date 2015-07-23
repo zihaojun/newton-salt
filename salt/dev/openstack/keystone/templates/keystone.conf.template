@@ -15,7 +15,11 @@ backend=dogpile.cache.memcached
 memcache_servers = {{VIP}}:11211
 [token]
 caching = true
-#provider = keystone.token.providers.pki.Provider
+{% if TOKEN_TYPE == 'pki' -%}
+provider = keystone.token.providers.pki.Provider
+{% elif TOKEN_TYPE == 'uuid' -%}
+provider = keystone.token.providers.uuid.Provider
+{% endif %}
 driver = keystone.token.persistence.backends.memcache.Token 
 [memcache]
 servers = {{VIP}}:11211

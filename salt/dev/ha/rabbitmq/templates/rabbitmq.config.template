@@ -1,0 +1,11 @@
+[
+  {kernel, [
+    {inet_default_connect_options, [{nodelay, true}]},
+    {inet_default_listen_options,  [{nodelay, true}]}
+  ]},
+  {rabbit, [
+    {tcp_listeners, [{"{{HOSTNAME}}", 5672}]},
+    {cluster_partition_handling, autoheal},
+    {loopback_users, [ ]}
+  ]}
+].

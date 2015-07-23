@@ -7,7 +7,7 @@ rabbitmq-init:
      - require:
        - salt: hosts-init
 
-
+{% if salt['pillar.get']('config_ha_install',False) %}
 join-rabbitmq-cluster:
   salt.state:
      - tgt:  {{ salt['pillar.get']('basic:rabbitmq:RAM_NODE') }}
@@ -21,3 +21,4 @@ set-policy:
      - sls:  dev.ha.rabbitmq.cluster.policy
      - require:
        - salt: join-rabbitmq-cluster
+{% endif %}

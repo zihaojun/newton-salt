@@ -11,6 +11,9 @@ logstash-init:
    file.managed:
       - source: salt://dev/openstack/logstash/templates/kibana.conf.template
       - mode: 644
+      - template: jinja
+      - defaults:
+        IPADDR: {{ grains['host'] }}
       - require:
         - pkg: logstash-init
 
@@ -37,7 +40,13 @@ extend:
       - mode: 644
       - template: jinja
       - defaults:
+{% if salt['pillar.get']('config_ha_install',False) %}
         VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
+{% else %}
+        VIP: {{ grains['host'] }} 
+{% endif %}
+        RABBIT_USER: {{ salt['pillar.get']('rabbit:RABBIT_USER','guest') }}
+        RABBIT_PASS: {{ salt['pillar.get']('rabbit:RABBIT_PASS','guest') }}
       - require:
         - pkg: logstash-init
 
@@ -47,7 +56,11 @@ extend:
       - mode: 644
       - template: jinja
       - defaults:
+{% if salt['pillar.get']('config_ha_install',False) %}
         VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
+{% else %}
+        VIP: {{ grains['host'] }}
+{% endif %}
       - require:
         - pkg: logstash-init
 
@@ -77,7 +90,13 @@ rename_kibana_dir:
       - user: apache
       - group: apache
       - defaults:
+{% if salt['pillar.get']('config_ha_install',False) %}
         VIP: {{ salt['pillar.get']('basic:pacemaker:VIP') }}
+{% else %}
+{% set HOSTNAME = grains['host'] %}
+{% set CONTROLLER_HOSTS = salt['pillar.get']('basic:nova:CONTROLLER:HOSTS') %}
+        VIP: {{ CONTROLLER_HOSTS.get(HOSTNAME,'') }}
+{% endif %}
       - mode: 644
       - require:
         - file: rename_kibana_dir 
@@ -94,4 +113,3 @@ ch_kibana_owner:
           - mode
         - require:
           - file: rename_kibana_dir
-

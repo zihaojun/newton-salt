@@ -1,27 +1,27 @@
 mysql-nova-database:
   mysql_database.present:
-    - name: nova
+    - name: {{ salt['pillar.get']('nova:MYSQL_NOVA_DBNAME','nova') }} 
     - connection_user: root
     - connection_pass: ''
 
 {% for host in ['localhost','%'] %}
 mysql-nova-{{ host }}-grants:
   mysql_user.present:
-    - name: nova
+    - name: {{ salt['pillar.get']('nova:MYSQL_NOVA_USER','nova') }}
     - host: '{{ host }}'
-    - password: nova
+    - password: "{{ salt['pillar.get']('nova:MYSQL_NOVA_PASS','nova') }}"
     - connection_user: root
     - connection_pass: ''
     - require:
-      - mysql_database: nova
+      - mysql_database: {{ salt['pillar.get']('nova:MYSQL_NOVA_DBNAME','nova') }}
   mysql_grants.present:
     - grant: all privileges
-    - database: nova.*
-    - user: nova
+    - database: {{ salt['pillar.get']('nova:MYSQL_NOVA_DBNAME','nova') }}.*
+    - user: {{ salt['pillar.get']('nova:MYSQL_NOVA_USER','nova') }}
     - host: '{{ host }}'
     - require:
-      - mysql_database: nova
-      - mysql_user: nova
+      - mysql_database: {{ salt['pillar.get']('nova:MYSQL_NOVA_DBNAME','nova') }}
+      - mysql_user: {{ salt['pillar.get']('nova:MYSQL_NOVA_USER','nova') }}
 {% endfor %}
 
 nova-table-sync:

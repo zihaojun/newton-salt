@@ -1,91 +1,102 @@
 config_cinder_install: True
 config_heat_install: True 
 config_ceilometer_install: True
-config_logstash_install: True
-config_compute_install: True 
+config_logstash_install: False
+config_compute_install: True
+config_storage_install: True
+config_ha_install: True
+config_enable_iptables: False
+config_enable_os_security: False
 
-keystone.endpoint: 'http://node-6:35357/v2.0'
+keystone.endpoint: 'http://controller-20:35357/v2.0'
 
 basic:
    rabbitmq:
-      DISC_NODE: node-6
-      RAM_NODE: node-7
+      DISC_NODE: controller-20
+      RAM_NODE: controller-21
   
    mariadb:
-      MASTER: node-6
-      SLAVE: node-7
+      MASTER: controller-20
+      SLAVE: controller-21
  
    mongodb:
-      MASTER: node-6
-      SLAVE: node-7
+      MASTER: controller-20
+      SLAVE: controller-21
 
    influxdb:
-      MASTER: node-6
-      SLAVE: node-7
+      MASTER: controller-20
+      SLAVE: controller-21
 
    corosync:
-      HEARTBEAT_NET: 192.168.200.0
-      NODES: node-6,node-7
-      NODE_1: node-6
-      NODE_2: node-7
+      HEARTBEAT_NET: 90.90.90.0
+      NODES: controller-20,controller-21
+      NODE_1: controller-20
+      NODE_2: controller-21
 
    pacemaker:
-      VIP: 192.168.200.20
+      VIP: 90.90.90.30
       VIP_HOSTNAME: controller
       VIP_NETMASK: 24
       VIP_NIC: eth0
-      VIP_PREFER_LOCATE: node-6
+      VIP_PREFER_LOCATE: controller-20
 
    storage-common:
       HOSTS: 
-        gluster-1: 172.16.100.13
-        gluster-2: 172.16.100.14
-        gluster-3: 172.16.100.6
-        gluster-4: 172.16.100.7
+        CONTROLLER:
+           controller-20: 90.90.90.20
+           controller-21: 90.90.90.21
+        STORAGE:  
        
       NODES: node-14,node-13
-      STORAGE_HOSTNAME_PREFIX: node-
+      MANAGE_HOSTNAME_PREFIX: compute-
       STORAGE_NET: 172.16.100.0
       ENABLE_COMPUTE: True
       ADD_NODE_ENABLED: False
-      STORAGE_INTERFACE: eth2
+      STORAGE_INTERFACE: eth0
 
    glusterfs:
-      VOLUME_NODE: node-14
-      VOLUME_NAME: openstack
+      VOLUME_NODE: controller-21
+      VOLUME_NAME: nova 
       BRICKS: /gfs/gluster
-      MOUNT_OPT: backup-volfile-servers=node-13
+      MOUNT_OPT: backup-volfile-servers=node-13 # use ':' to seperate
 
    glance:
       IMAGE_BACKENDS: glusterfs   # optional configuration: local|glusterfs    
+      VOLUME_NAME: glance
+      BRICKS: /gfs/gfs
 
    nova:
       CONTROLLER:
+        COMPUTE_ENABLED: True 
         HOSTS:
-          node-6: 192.168.200.6
-          node-7: 192.168.200.7
+          controller-20: 90.90.90.20
+          controller-21: 90.90.90.21
     
       COMPUTE:
         HOSTS:
-          node-14: 192.168.200.14
-          node-13: 192.168.200.13
-        INSTANCE_BACKENDS: glusterfs   # optional configuration: local|glusterfs
-        NODES: node-14,node-13
+          compute-22: 90.90.90.22
+          compute-23: 90.90.90.23
+          compute-24: 90.90.90.24
+          compute-25: 90.90.90.25
+        INSTANCE_BACKENDS: local   # optional configuration: local|glusterfs
+        NODES: compute-22,compute-23,compute-24,compute-25 
         ADD_NODE_ENABLED: False 
   
    neutron:
-      NEUTRON_NETWORK_TYPE: vxlan  # optional configuration: vlan|gre|vxlan
-      NETWORK_VLAN_RANGES: 101:130
+      NEUTRON_NETWORK_TYPE: vlan  # optional configuration: vlan|gre|vxlan
+      NETWORK_VLAN_RANGES: 3:10
       TUNNEL_ID_RANGES: 1:1000
       NETWORK_ENABLED: True
       PUBLIC_INTERFACE: eth1
-      L3_ENABLED: True
+      L3_ENABLED: False
       DATA_INTERFACE: eth0
       MANAGE_INTERFACE: eth0
 
    cinder:
-      BACKENDS: glusterfs  # optional backends: glusterfs,local or ceph.only support glusterfs now.
-      VOLUME_URL: localhost:/openstack -o backup-volfile-servers=node-6:node-7 # use ':' to seperate
+      BACKENDS: glusterfs  # optional backends: none,glusterfs,lvm or ceph.only support glusterfs、lvm now.
+      VOLUME_NAME: glance
+      BRICKS: /cinder/gfs
+      VOLUME_URL: localhost:/glance
 
    horizon:
       ANIMBUS_ENABLED: True

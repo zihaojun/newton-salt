@@ -1,9 +1,9 @@
 output{
   rabbitmq {
 	host => "{{VIP}}"
-	port => 5673
-	user => "guest"
-	password => "guest"
+	port => 5672 
+	user => "{{ RABBIT_USER }}"
+	password => "{{ RABBIT_PASS }}"
 	exchange => "logstash-rabbitmq"
 	exchange_type => "direct"
 	durable => true 

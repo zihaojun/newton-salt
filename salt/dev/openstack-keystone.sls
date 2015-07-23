@@ -41,7 +41,7 @@ keystone-user-role-tenant-init:
          - dev.openstack.keystone.user-role-tenant
        - require:
          - salt: keystone-service
-
+{% if salt['pillar.get']('config_ha_install',False) %}
 keystone-add-haproxy:
    salt.state:
        - tgt: {{ salt['pillar.get']('basic:corosync:NODES') }}
@@ -54,4 +54,5 @@ keystone-add-haproxy:
          - salt: haproxy-service
 {% else %}
          - salt: crm-haproxy
+{% endif %}
 {% endif %}

@@ -26,6 +26,8 @@ cpu_allocation_ratio = 4.0
 ram_allocation_ratio = 1.0
 allow_resize_to_same_host = True
 allow_migrate_to_same_host = True
+auth_strategy = keystone
+api_paste_config=/etc/nova/api-paste.ini
 instances_shared_storage = True
 resume_guests_state_on_host_boot = True
 running_deleted_instance_action = reap
@@ -33,6 +35,9 @@ reserved_host_memory_mb = 4096
 reserved_host_disk_mb = 10240
 service_down_time = 120
 rpc_response_timeout = 300
+
+connection_type=libvirt
+compute_driver=libvirt.LibvirtDriver
 
 quota_cores = 120
 quota_instances = 30
@@ -45,7 +50,9 @@ linuxnet_interface_driver = nova.network.linux_net.LinuxOVSInterfaceDriver
 firewall_driver = nova.virt.firewall.NoopFirewallDriver
 security_group_api = neutron
 
-rabbit_hosts={{ VIP }}:5673
+rabbit_hosts={{ RABBIT }} 
+rabbit_userid={{ RABBIT_USER }}
+rabbit_password={{ RABBIT_PASS }}
 rabbit_retry_interval=1
 rabbit_retry_backoff=2
 rabbit_max_retries=0
@@ -63,6 +70,8 @@ notification_driver = nova.openstack.common.notifier.rpc_notifier
 notification_driver = ceilometer.compute.nova_notifier
 vif_plugging_timeout = 10
 vif_plugging_is_fatal = False
+
+network_device_mtu = 1450 
 
 [glance]
 api_servers={{ VIP }}:9292
@@ -91,11 +100,10 @@ use_tpool=True
 inject_password = True
 inject_key = True
 inject_partition = -1
-{% if COMPUTE_ENABLED %}
 virt_type = kvm
 live_migration_flag=VIR_MIGRATE_UNDEFINE_SOURCE,VIR_MIGRATE_PEER2PEER,VIR_MIGRATE_LIVE,VIR_MIGRATE_PERSIST_DEST
 disk_cachemodes="file=directsync","block=none"
-{% endif %}
+qemu_allowed_storage_drivers = gluster
 
 [spice]
 enabled = True

@@ -1,4 +1,8 @@
+{% if salt['pillar.get']('config_ha_install',False) %}
 {% set vip_hostname = salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') %}
+{% else %}
+{% set vip_hostname = grains['host'] %}
+{% endif %}
 keystone-tenants:
   keystone.tenant_present:
     - names:
@@ -18,7 +22,7 @@ keystone-roles:
 
 {{ salt['pillar.get']('keystone:ADMIN_USER','admin') }}:
   keystone.user_present:
-    - password: {{ salt['pillar.get']('keystone:ADMIN_PASS','admin') }}
+    - password: "{{ salt['pillar.get']('keystone:ADMIN_PASS','admin') }}"
     - email: admin@domain.com
     - roles:
       - admin:   
@@ -38,22 +42,22 @@ keystone-roles:
   keystone.user_present:
 {% if user == 'glance' %}
     - name: {{ salt['pillar.get']('glance:AUTH_ADMIN_GLANCE_USER') }}
-    - password: {{ salt['pillar.get']('glance:AUTH_ADMIN_GLANCE_PASS') }}
+    - password: "{{ salt['pillar.get']('glance:AUTH_ADMIN_GLANCE_PASS') }}"
 {% elif user == 'nova' %}
     - name: {{ salt['pillar.get']('nova:AUTH_ADMIN_NOVA_USER') }}
-    - password: {{ salt['pillar.get']('nova:AUTH_ADMIN_NOVA_PASS') }}   
+    - password: "{{ salt['pillar.get']('nova:AUTH_ADMIN_NOVA_PASS') }}" 
 {% elif user == 'neutron' %}
     - name: {{ salt['pillar.get']('neutron:AUTH_ADMIN_NEUTRON_USER') }}
-    - password: {{ salt['pillar.get']('neutron:AUTH_ADMIN_NEUTRON_PASS') }} 
+    - password: "{{ salt['pillar.get']('neutron:AUTH_ADMIN_NEUTRON_PASS') }}"
 {% elif user == 'cinder' %}
     - name: {{ salt['pillar.get']('cinder:AUTH_ADMIN_CINDER_USER') }}
-    - password: {{ salt['pillar.get']('cinder:AUTH_ADMIN_CINDER_PASS') }} 
+    - password: "{{ salt['pillar.get']('cinder:AUTH_ADMIN_CINDER_PASS') }}"
 {% elif user == 'ceilometer' %}
     - name: {{ salt['pillar.get']('ceilometer:AUTH_ADMIN_CEILOMETER_USER') }}
-    - password: {{ salt['pillar.get']('ceilometer:AUTH_ADMIN_CEILOMETER_PASS') }} 
+    - password: "{{ salt['pillar.get']('ceilometer:AUTH_ADMIN_CEILOMETER_PASS') }}"
 {% elif user == 'heat' %}
     - name: {{ salt['pillar.get']('heat:AUTH_ADMIN_HEAT_USER') }}
-    - password: {{ salt['pillar.get']('heat:AUTH_ADMIN_HEAT_PASS') }}
+    - password: "{{ salt['pillar.get']('heat:AUTH_ADMIN_HEAT_PASS') }}"
 {% endif %}
     - email: {{user}}@domain.com
     - tenant: service

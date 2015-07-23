@@ -1,5 +1,5 @@
 [gerrit]
-host=172.16.103.4
+host=172.16.102.5
 port=29418
 project=99cloud/openstack-deploy.git
 defaultbranch=master

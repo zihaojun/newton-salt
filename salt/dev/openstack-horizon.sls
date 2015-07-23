@@ -16,6 +16,7 @@ animbus-db-init:
          - salt: galera-cluster-init
 {% endif %}
 
+{% if salt['pillar.get']('config_ha_install',False) %}
 openstack-add-haproxy:
    salt.state:
        - tgt: {{ salt['pillar.get']('basic:corosync:NODES') }}
@@ -40,4 +41,5 @@ openstack-add-haproxy:
 {% endif %}
 {% if salt['pillar.get']('config_logstash_install',False) %}
          - salt: logstash-service
+{% endif %}
 {% endif %}

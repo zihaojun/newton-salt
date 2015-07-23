@@ -19,10 +19,13 @@ storage-net-init:
 {% endif %}
 
 
-{% if salt['pillar.get']('basic:cinder:BACKENDS') == 'glusterfs' %}
+{% if salt['pillar.get']('basic:cinder:BACKENDS') == 'glusterfs' or 
+   salt['pillar.get']('basic:glance:IMAGE_BACKENDS') == 'glusterfs' or 
+   salt['pillar.get']('basic:nova:COMPUTE::INSTANCE_BACKENDS') == 'glusterfs'
+%}
 glusterfs-init:
    salt.state:
-       - tgt: {{ salt['pillar.get']('basic:storage-common:NODES') }}
+       - tgt: {{ salt['pillar.get']('basic:storage-common:NODES','') }}
        - tgt_type: list
        - sls:
          - dev.storage.glusterfs
@@ -73,8 +76,9 @@ glusterfs-volume:
        - require:
          - salt: glusterfs-peer
 {% endif %}
+{% endif %}
 
-{% elif salt['pillar.get']('basic:cinder:BACKENDS') == 'ceph' %}
+{% if salt['pillar.get']('basic:cinder:BACKENDS') == 'ceph' %}
 ceph-init:
    salt.state:
        - tgt: {{ salt['pillar.get']('basic:storage-common:NODES') }}

@@ -2,7 +2,7 @@
 server_id={{ ID }}
 bind_address = {{ HOSTNAME }} 
 datadir=/var/lib/mysql
-#log-error=/var/log/mariadb/mariadb.log
+log-error=/var/log/mariadb/mariadb-error.log
 collation-server = utf8_general_ci
 init-connect = 'SET NAMES utf8'
 character-set-server = utf8

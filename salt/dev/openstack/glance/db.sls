@@ -1,27 +1,27 @@
 mysql-glance-database:
   mysql_database.present:
-    - name: glance
+    - name: {{ salt['pillar.get']('glance:MYSQL_GLANCE_DBNAME','glance') }} 
     - connection_user: root
     - connection_pass: ''
 
 {% for host in ['localhost','%'] %}
 mysql-glance-{{ host }}-grants:
   mysql_user.present:
-    - name: glance
+    - name: {{ salt['pillar.get']('glance:MYSQL_GLANCE_USER','glance') }}
     - host: '{{ host }}'
-    - password: glance
+    - password: "{{ salt['pillar.get']('glance:MYSQL_GLANCE_PASS','glance') }}"
     - connection_user: root
     - connection_pass: ''
     - require:
-      - mysql_database: glance
+      - mysql_database: {{ salt['pillar.get']('glance:MYSQL_GLANCE_DBNAME','glance') }}
   mysql_grants.present:
     - grant: all privileges
-    - database: glance.*
-    - user: glance
+    - database: {{ salt['pillar.get']('glance:MYSQL_GLANCE_DBNAME','glance') }}.*
+    - user: {{ salt['pillar.get']('glance:MYSQL_GLANCE_USER','glance') }}
     - host: '{{ host }}'
     - require:
-      - mysql_database: glance
-      - mysql_user: glance
+      - mysql_database: {{ salt['pillar.get']('glance:MYSQL_GLANCE_DBNAME','glance') }} 
+      - mysql_user: {{ salt['pillar.get']('glance:MYSQL_GLANCE_USER','glance') }}
 {% endfor %}
 
 glance-table-sync:

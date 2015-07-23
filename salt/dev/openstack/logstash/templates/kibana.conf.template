@@ -1,3 +1,4 @@
+Listen {{ IPADDR }}:8002
 <VirtualHost *:8002>
   ServerName www.kibana.com
   DocumentRoot /var/www/html

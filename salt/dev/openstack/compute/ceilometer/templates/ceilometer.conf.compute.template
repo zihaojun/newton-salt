@@ -1,5 +1,7 @@
 [DEFAULT]
-rabbit_hosts={{VIP}}:5673
+rabbit_hosts={{ RABBIT }}
+rabbit_userid={{ RABBIT_USER }}
+rabbit_password={{ RABBIT_PASS }}
 rabbit_ha_queues=true
 rabbit_retry_interval=1
 rabbit_retry_backoff=2

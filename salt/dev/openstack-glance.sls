@@ -4,9 +4,12 @@ glance-init:
        - tgt_type: list
        - sls:
          - dev.openstack.glance
-{% if salt['pillar.get']('basic:glance:IMAGE_BACKENDS','local') == 'glusterfs' %}
+{% if salt['pillar.get']('config_ha_install',False) %}
+{% if salt['pillar.get']('config_storage_install',True) and 
+     salt['pillar.get']('basic:glance:IMAGE_BACKENDS','local') == 'glusterfs' %}
        - require:
          - salt: glusterfs-volume
+{% endif %}
 {% endif %}
 
 glance-db-init:
@@ -26,4 +29,6 @@ glance-service:
          - dev.openstack.glance.service
        - require:
          - salt: glance-db-init
+{% if salt['pillar.get']('config_ha_install',False) %}
          - salt: keystone-add-haproxy
+{% endif %}

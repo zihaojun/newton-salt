@@ -20,12 +20,15 @@ firewall_driver = nova.virt.firewall.NoopFirewallDriver
 security_group_api = neutron
 
 rpc_backend=rabbit 
-rabbit_hosts={{ VIP }}:5673
+rabbit_hosts={{ RABBIT }} 
+rabbit_userid={{ RABBIT_USER }}
+rabbit_password={{ RABBIT_PASS }}
 rabbit_retry_interval=1
 rabbit_retry_backoff=2
 rabbit_max_retries=0
 rabbit_durable_queues=false
 rabbit_ha_queues=True
+rpc_response_timeout = 300
 
 connection_type=libvirt
 compute_driver=libvirt.LibvirtDriver
@@ -40,6 +43,8 @@ notification_driver = nova.openstack.common.notifier.rpc_notifier
 notification_driver = ceilometer.compute.nova_notifier
 vif_plugging_timeout = 10
 vif_plugging_is_fatal = False
+
+network_device_mtu = 1450
 
 [glance]
 api_servers={{ VIP }}:9292

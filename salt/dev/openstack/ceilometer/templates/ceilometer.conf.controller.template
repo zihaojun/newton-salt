@@ -1,7 +1,9 @@
 [DEFAULT]
 debug=False
 rpc_backend=rabbit
-rabbit_hosts={{ VIP }}:5673
+rabbit_hosts={{ RABBIT }} 
+rabbit_userid={{ RABBIT_USER }}
+rabbit_password={{ RABBIT_PASS }}
 rabbit_ha_queues=true
 rabbit_retry_interval=1
 rabbit_retry_backoff=2
@@ -23,7 +25,7 @@ max_overflow=20
 {% if ANIMBUS_ENABLED -%}
 [influxdb]
 influxdb_host={{VIP}}
-influxdb_port=8086
+influxdb_port={{INFLUXDB_PORT}}
 influxdb_username=root
 influxdb_password=root
 influxdb_database=ceilometer

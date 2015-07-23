@@ -14,11 +14,12 @@ mongodb-cluster-init:
        - dev.ha.mongodb.cluster
      - require:
        - salt: mongodb-init
-
+{% if salt['pillar.get']('config_ha_install',False) %}
 join-mongodb-cluster:
   salt.state:
      - tgt: {{ salt['pillar.get']('basic:mongodb:SLAVE') }}
      - sls:
        - dev.ha.mongodb.cluster.add
      - require:
-       - salt: mongodb-cluster-init 
+       - salt: mongodb-cluster-init
+{% endif %}

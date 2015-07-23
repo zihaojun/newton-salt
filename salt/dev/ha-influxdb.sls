@@ -14,13 +14,12 @@ influxdb-cluster-init:
        - dev.ha.influxdb.cluster
      - require:
        - salt: influxdb-init
-
-{#
+{% if salt['pillar.get']('config_ha_install',False) %}
 join-influxdb-cluster:
   salt.state:
      - tgt: {{ salt['pillar.get']('basic:influxdb:SLAVE') }}
      - sls:
        - dev.ha.influxdb.cluster.add
      - require:
-       - salt: influxdb-cluster-init 
-#}
+       - salt: influxdb-cluster-init
+{% endif %}

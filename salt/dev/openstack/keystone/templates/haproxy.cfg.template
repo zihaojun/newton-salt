@@ -2,7 +2,7 @@ global
     log 127.0.0.1 local2
     chroot      /var/lib/haproxy
     pidfile     /var/run/haproxy.pid
-    maxconn     4096
+    maxconn     10000 
     user        haproxy
     group       haproxy
     daemon
@@ -14,11 +14,11 @@ defaults
     option tcplog
     option dontlognull
     retries 3
+    maxconn  10000
     option redispatch
-    maxconn 2000
-    contimeout 5000
-    clitimeout 50000
-    srvtimeout 50000
+    timeout connect 5000
+    timeout client 50000
+    timeout server 50000
 
 listen galera_cluster
         bind {{ VIP_HOSTNAME }}:3306
@@ -33,10 +33,11 @@ listen mongodb_cluster
         server {{ NODE_2 }} {{ NODE_2 }}:27017 check inter 2000 rise 2 fall 5 backup
 
 listen rabbitmq_cluster
-	bind	{{ VIP_HOSTNAME }}:5673
+	bind	{{ VIP_HOSTNAME }}:5672
 	balance source
 	mode 	tcp
 	option  tcpka
+        maxconn 10000
 	timeout client 0
 	timeout server 0
 	server 	{{ NODE_1 }} {{ NODE_1 }}:5672 check inter 2000 rise 2 fall 3
@@ -46,6 +47,9 @@ listen memcache_cluster
 	bind	{{ VIP_HOSTNAME }}:11211
 	balance source
 	mode 	tcp
+        timeout connect 1h
+        timeout client 1h
+        timeout server 1h
 	server 	{{ NODE_1 }} {{ NODE_1 }}:11211 check inter 2000 rise 2 fall 3
 	server 	{{ NODE_2 }} {{ NODE_2 }}:11211 check inter 2000 rise 2 fall 3 backup
 
@@ -79,7 +83,7 @@ listen elasticsearch_api_cluster
 
 {% if ENABLE_ANIMBUS -%}
 listen influxdb_api_cluster
-      bind {{ VIP_HOSTNAME }}:8086
+      bind {{ VIP_HOSTNAME }}:8087
       balance  source
       option  tcpka
       option  tcplog

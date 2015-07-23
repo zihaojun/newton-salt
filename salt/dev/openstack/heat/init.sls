@@ -5,21 +5,19 @@ heat-init:
           - openstack-heat-engine
           - python-heatclient
 
-/etc/heat/heat.conf:
-   file.managed:
-        - source: salt://dev/openstack/heat/templates/heat.conf.template
-        - mode: 644
-        - user: heat
-        - group: heat
+salt://dev/openstack/heat/files/heat-db.sh:
+    cmd.script:
         - template: jinja
+        - require:
+          - pkg: heat-init
         - defaults:
-          IPADDR: {{ grains['host'] }}
+{% if salt['pillar.get']('config_ha_install',False) %}
           VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
+{% else %}
+          VIP: {{ grains['host'] }}
+{% endif %}
           MYSQL_HEAT_USER: {{ salt['pillar.get']('heat:MYSQL_HEAT_USER') }}
           MYSQL_HEAT_PASS: {{ salt['pillar.get']('heat:MYSQL_HEAT_PASS') }}
           MYSQL_HEAT_DBNAME: {{ salt['pillar.get']('heat:MYSQL_HEAT_DBNAME') }}
-          AUTH_ADMIN_HEAT_USER: {{ salt['pillar.get']('heat:AUTH_ADMIN_HEAT_USER') }}
-          AUTH_ADMIN_HEAT_PASS: {{ salt['pillar.get']('heat:AUTH_ADMIN_HEAT_PASS') }}
-        - require:
-          - pkg: heat-init
-
+        - env:
+          - BATCH: 'yes'

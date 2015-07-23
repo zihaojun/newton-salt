@@ -1,27 +1,27 @@
 mysql-heat-database:
   mysql_database.present:
-    - name: heat
+    - name: {{ salt['pillar.get']('heat:MYSQL_HEAT_DBNAME','heat') }} 
     - connection_user: root
     - connection_pass: ''
 
 {% for host in ['localhost','%'] %}
 mysql-heat-{{ host }}-grants:
   mysql_user.present:
-    - name: heat
+    - name: {{ salt['pillar.get']('heat:MYSQL_HEAT_USER','heat') }}
     - host: '{{ host }}'
-    - password: heat
+    - password: "{{ salt['pillar.get']('heat:MYSQL_HEAT_PASS','heat') }}"
     - connection_user: root
     - connection_pass: ''
     - require:
-      - mysql_database: heat
+      - mysql_database: {{ salt['pillar.get']('heat:MYSQL_HEAT_DBNAME','heat') }}
   mysql_grants.present:
     - grant: all privileges
-    - database: heat.*
-    - user: heat
+    - database: {{ salt['pillar.get']('heat:MYSQL_HEAT_DBNAME','heat') }}.*
+    - user: {{ salt['pillar.get']('heat:MYSQL_HEAT_USER','heat') }}
     - host: '{{ host }}'
     - require:
-      - mysql_database: heat
-      - mysql_user: heat
+      - mysql_database: {{ salt['pillar.get']('heat:MYSQL_HEAT_DBNAME','heat') }}
+      - mysql_user: {{ salt['pillar.get']('heat:MYSQL_HEAT_USER','heat') }}
 {% endfor %}
 
 heat-table-sync:

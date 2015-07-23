@@ -7,7 +7,7 @@ ceilometer-init:
 
 ceilometer-db-init:
    salt.state:
-       - tgt: {{ salt['pillar.get']('basic:mariadb:MASTER') }}
+       - tgt: {{ salt['pillar.get']('basic:mongodb:MASTER') }}
        - sls:
          - dev.openstack.ceilometer.db
        - require:
@@ -25,4 +25,6 @@ ceilometer-service:
          - dev.openstack.ceilometer.service
        - require:
          - salt: ceilometer-db-init
+{% if salt['pillar.get']('config_ha_install',False) %}
          - salt: keystone-add-haproxy
+{% endif %}

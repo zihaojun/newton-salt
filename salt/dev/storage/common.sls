@@ -19,6 +19,6 @@
 
 add-storage-interface-ip:
    cmd.run:
-      - name: ifconfig {{ storage_interface }} {{ storage_net_prefix + '.' + manage_ip[0].split('.')[3] }}/24
+      - name: ifconfig {{ storage_interface }} {{ storage_net_prefix + '.' + manage_ip[0].split('.')[3] }} netmask 255.255.255.0
       - require:
         - cmd: {{ storage_interface }}_interface_up

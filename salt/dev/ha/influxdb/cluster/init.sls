@@ -7,7 +7,4 @@ master-influxdb-conf:
        - defaults:
          HOSTNAME: {{ grains['host'] }}
     service.running:
-       - name: influxdb 
-       - enable: True
-       - watch:
-         - file: master-influxdb-conf
+       - name: influxdb
