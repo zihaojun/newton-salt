@@ -1,32 +1,27 @@
-mysql-cinder-database:
+cinder-database:
   mysql_database.present:
-    - name: {{ salt['pillar.get']('cinder:MYSQL_CINDER_DBNAME','cinder') }} 
+    - name: 'cinder'
     - connection_user: root
-    - connection_pass: ''
+    - connection_pass: 'openstack'
 
 {% for host in ['localhost','%'] %}
 mysql-cinder-{{ host }}-grants:
   mysql_user.present:
-    - name: {{ salt['pillar.get']('cinder:MYSQL_CINDER_USER','cinder') }}
+    - name: 'cinder'
     - host: '{{ host }}'
-    - password: "{{ salt['pillar.get']('cinder:MYSQL_CINDER_PASS','cinder') }}"
+    - password: "{{ salt['pillar.get']('public_password') }}"
     - connection_user: root
-    - connection_pass: ''
+    - connection_pass: 'openstack'
     - require:
-      - mysql_database: {{ salt['pillar.get']('cinder:MYSQL_CINDER_DBNAME','cinder') }}
+      - mysql_database: cinder-database
   mysql_grants.present:
     - grant: all privileges
-    - database: {{ salt['pillar.get']('cinder:MYSQL_CINDER_DBNAME','cinder') }}.*
-    - user: {{ salt['pillar.get']('cinder:MYSQL_CINDER_USER','cinder') }}
+    - database: cinder.*
+    - user: cinder
     - host: '{{ host }}'
+    - connection_user: root
+    - connection_pass: 'openstack'
     - require:
-      - mysql_database: {{ salt['pillar.get']('cinder:MYSQL_CINDER_DBNAME','cinder') }}
-      - mysql_user: {{ salt['pillar.get']('cinder:MYSQL_CINDER_USER','cinder') }}
+      - mysql_database: cinder-database
+      - mysql_user: mysql-cinder-{{ host }}-grants
 {% endfor %}
-
-cinder-table-sync:
-  cmd.run:
-    - name: /usr/bin/cinder-manage db sync 
-    - require:
-      - mysql_grants: mysql-cinder-localhost-grants
-      - mysql_grants: mysql-cinder-%-grants

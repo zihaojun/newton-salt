@@ -1,32 +1,29 @@
-mysql-nova-database:
+{% for dbname in ['nova_api','nova'] %}
+{{ dbname }}-database:
   mysql_database.present:
-    - name: {{ salt['pillar.get']('nova:MYSQL_NOVA_DBNAME','nova') }} 
+    - name: '{{ dbname }}'
     - connection_user: root
-    - connection_pass: ''
-
-{% for host in ['localhost','%'] %}
-mysql-nova-{{ host }}-grants:
+    - connection_pass: 'openstack'
+  {% for host in ['localhost','%'] %}
+mysql-{{dbname}}-{{ host }}-grants:
   mysql_user.present:
-    - name: {{ salt['pillar.get']('nova:MYSQL_NOVA_USER','nova') }}
+    - name: 'nova'
     - host: '{{ host }}'
-    - password: "{{ salt['pillar.get']('nova:MYSQL_NOVA_PASS','nova') }}"
+    - password: "{{ salt['pillar.get']('public_password') }}"
     - connection_user: root
-    - connection_pass: ''
+    - connection_pass: 'openstack'
     - require:
-      - mysql_database: {{ salt['pillar.get']('nova:MYSQL_NOVA_DBNAME','nova') }}
+      - mysql_database: {{ dbname }}-database
   mysql_grants.present:
     - grant: all privileges
-    - database: {{ salt['pillar.get']('nova:MYSQL_NOVA_DBNAME','nova') }}.*
-    - user: {{ salt['pillar.get']('nova:MYSQL_NOVA_USER','nova') }}
+    - database: {{ dbname }}.*
+    - user: nova
     - host: '{{ host }}'
+    - connection_user: root
+    - connection_pass: 'openstack'
     - require:
-      - mysql_database: {{ salt['pillar.get']('nova:MYSQL_NOVA_DBNAME','nova') }}
-      - mysql_user: {{ salt['pillar.get']('nova:MYSQL_NOVA_USER','nova') }}
+      - mysql_database: {{ dbname }}-database
+      - mysql_user: mysql-{{ dbname }}-{{ host }}-grants
+  {% endfor %}
 {% endfor %}
 
-nova-table-sync:
-  cmd.run:
-    - name: /usr/bin/nova-manage db sync 
-    - require:
-      - mysql_grants: mysql-nova-localhost-grants
-      - mysql_grants: mysql-nova-%-grants

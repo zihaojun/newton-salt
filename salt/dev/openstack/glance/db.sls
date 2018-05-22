@@ -1,32 +1,27 @@
-mysql-glance-database:
+glance-database:
   mysql_database.present:
-    - name: {{ salt['pillar.get']('glance:MYSQL_GLANCE_DBNAME','glance') }} 
+    - name: 'glance'
     - connection_user: root
-    - connection_pass: ''
+    - connection_pass: 'openstack'
 
 {% for host in ['localhost','%'] %}
 mysql-glance-{{ host }}-grants:
   mysql_user.present:
-    - name: {{ salt['pillar.get']('glance:MYSQL_GLANCE_USER','glance') }}
+    - name: 'glance'
     - host: '{{ host }}'
-    - password: "{{ salt['pillar.get']('glance:MYSQL_GLANCE_PASS','glance') }}"
+    - password: "{{ salt['pillar.get']('public_password') }}"
     - connection_user: root
-    - connection_pass: ''
+    - connection_pass: 'openstack'
     - require:
-      - mysql_database: {{ salt['pillar.get']('glance:MYSQL_GLANCE_DBNAME','glance') }}
+      - mysql_database: glance-database
   mysql_grants.present:
     - grant: all privileges
-    - database: {{ salt['pillar.get']('glance:MYSQL_GLANCE_DBNAME','glance') }}.*
-    - user: {{ salt['pillar.get']('glance:MYSQL_GLANCE_USER','glance') }}
+    - database: glance.*
+    - user: glance
     - host: '{{ host }}'
+    - connection_user: root
+    - connection_pass: 'openstack'
     - require:
-      - mysql_database: {{ salt['pillar.get']('glance:MYSQL_GLANCE_DBNAME','glance') }} 
-      - mysql_user: {{ salt['pillar.get']('glance:MYSQL_GLANCE_USER','glance') }}
+      - mysql_database: glance-database
+      - mysql_user: mysql-glance-{{ host }}-grants
 {% endfor %}
-
-glance-table-sync:
-  cmd.run:
-    - name: /usr/bin/glance-manage db_sync 
-    - require:
-      - mysql_grants: mysql-glance-localhost-grants
-      - mysql_grants: mysql-glance-%-grants

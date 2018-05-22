@@ -1,50 +1,44 @@
-cinder-init:
-   pkg.installed:
-      - pkgs:
-         - openstack-cinder
-         - python-cinderclient
-         - python-oslo-db
-         - targetcli
-{% if salt['pillar.get']('config_storage_install',True) and 
-      salt['pillar.get']('basic:cinder:BACKENDS') == 'glusterfs' %}
-         - glusterfs
-         - glusterfs-libs
-         - glusterfs-fuse
-         - glusterfs-api
+include:
+  - dev.openstack.cinder.db
+  - dev.openstack.cinder.create-auth-user
 
-/etc/cinder/glusterfs_shares:
-    file.managed:
-        - source: salt://dev/openstack/cinder/templates/glusterfs_shares.template
-        - mode: 644
-        - user: cinder
-        - group: cinder
-        - template: jinja
-        - defaults:
-          VOLUME_URL: {{ salt['pillar.get']('basic:cinder:VOLUME_URL') }}
-        - require:
-          - pkg: cinder-init
+cinder:
+  pkg.installed:
+    - pkgs:
+      - openstack-cinder
+      - targetcli
+      - python-keystone
 
-{% elif salt['pillar.get']('basic:cinder:BACKENDS') == 'lvm' %}
-salt://dev/openstack/cinder/files/cinder-volumes.sh:
-    cmd.script:
-        - require:
-          - pkg: cinder-init
-{% endif %}
+/etc/cinder/shares.conf:
+  file.managed:
+    - source: salt://dev/openstack/cinder/templates/shares.conf
+    - user: root
+    - group: cinder
+    - require:
+      - pkg: cinder
 
+/etc/cinder/cinder.conf:
+  file.managed:
+    - source: salt://dev/openstack/cinder/templates/cinder.conf.template
+    - template: jinja
+    - default:
+      CINDER_DBPASS: {{ salt['pillar.get']('public_password') }}
+      CONTROLLER: {{ salt['pillar.get']('nova:CONTROLLER') }}
+      CONTROLLER_IP: {{ salt['pillar.get']('nova:CONTROLLER_IP') }}
+      CINDER_USER_PASS: {{ salt['pillar.get']('public_password') }}
+      STORAGETYPE: {{ salt['pillar.get']('storage:TYPE') }}
+    - require:
+      - pkg: cinder
 
-salt://dev/openstack/cinder/files/cinder-db.sh:
-    cmd.script:
-        - template: jinja
-        - require:
-          - pkg: cinder-init
-        - defaults:
-{% if salt['pillar.get']('config_ha_install',False) %}
-          VIP: {{ salt['pillar.get']('basic:pacemaker:VIP_HOSTNAME') }}
-{% else %}
-          VIP: {{ grains['host'] }}
-{% endif %}
-          MYSQL_CINDER_USER: {{ salt['pillar.get']('cinder:MYSQL_CINDER_USER') }}
-          MYSQL_CINDER_PASS: {{ salt['pillar.get']('cinder:MYSQL_CINDER_PASS') }}
-          MYSQL_CINDER_DBNAME: {{ salt['pillar.get']('cinder:MYSQL_CINDER_DBNAME') }}
-        - env:
-          - BATCH: 'yes'
+cinder-back:
+  cmd.run:
+    - name: sed -i '$a [glusterfs]\nvolume_driver=cinder.volume.drivers.glusterfs.GlusterfsDriver\nvolume_backend_name=GlusterFS\nglusterfs_shares_config=/etc/cinder/shares.conf\nglusterfs_mount_point_base=/var/lib/cinder/tmp' /etc/cinder/cinder.conf
+    - require:
+      - file: /etc/cinder/cinder.conf
+
+cinder-service:
+  cmd.script:
+    - source: salt://dev/openstack/cinder/templates/cinder-service.sh
+    - require:
+      - cmd: cinder-back
+      - mysql_database: cinder-database

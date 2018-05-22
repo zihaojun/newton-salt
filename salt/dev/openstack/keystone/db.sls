@@ -1,32 +1,27 @@
-mysql-keystone-database:
+keystone-database:
   mysql_database.present:
-    - name: {{ salt['pillar.get']('keystone:MYSQL_KEYSTONE_DBNAME','keystone') }} 
+    - name: 'keystone'
     - connection_user: root
-    - connection_pass: ''
+    - connection_pass: 'openstack'
 
 {% for host in ['localhost','%'] %}
 mysql-keystone-{{ host }}-grants:
   mysql_user.present:
-    - name: {{ salt['pillar.get']('keystone:MYSQL_KEYSTONE_USER','keystone') }} 
+    - name: 'keystone'
     - host: '{{ host }}'
-    - password: "{{ salt['pillar.get']('keystone:MYSQL_KEYSTONE_PASS','keystone') }}" 
+    - password: "{{ salt['pillar.get']('public_password') }}"
     - connection_user: root
-    - connection_pass: ''
+    - connection_pass: 'openstack'
     - require:
-      - mysql_database: {{ salt['pillar.get']('keystone:MYSQL_KEYSTONE_DBNAME','keystone') }} 
+      - mysql_database: keystone-database
   mysql_grants.present:
     - grant: all privileges
-    - database: {{ salt['pillar.get']('keystone:MYSQL_KEYSTONE_DBNAME','keystone') }}.*
-    - user: {{ salt['pillar.get']('keystone:MYSQL_KEYSTONE_USER','keystone') }}
+    - database: keystone.*
+    - user: keystone
     - host: '{{ host }}'
+    - connection_user: root
+    - connection_pass: 'openstack'
     - require:
-      - mysql_database: {{ salt['pillar.get']('keystone:MYSQL_KEYSTONE_DBNAME','keystone') }} 
-      - mysql_user: {{ salt['pillar.get']('keystone:MYSQL_KEYSTONE_USER','keystone') }} 
+      - mysql_database: keystone-database
+      - mysql_user: mysql-keystone-{{ host }}-grants
 {% endfor %}
-
-keystone-table-sync:
-  cmd.run:
-    - name: /usr/bin/keystone-manage db_sync 
-    - require:
-      - mysql_grants: mysql-keystone-localhost-grants
-      - mysql_grants: mysql-keystone-%-grants

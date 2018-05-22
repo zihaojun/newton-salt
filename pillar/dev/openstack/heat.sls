@@ -1,6 +1,0 @@
-heat:
-    MYSQL_HEAT_USER: heat
-    MYSQL_HEAT_PASS: 'S4f65YYj4PYWw2dF' 
-    MYSQL_HEAT_DBNAME: heat
-    AUTH_ADMIN_HEAT_USER: heat
-    AUTH_ADMIN_HEAT_PASS: 'FiaXnSPgcDRyq2Ay'

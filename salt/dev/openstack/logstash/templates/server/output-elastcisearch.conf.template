@@ -1,9 +1,0 @@
-#将消息传输到 elasticsearch
-
-output{
-    elasticsearch {
-        host => "{{VIP}}"
-        port => 9200
-        protocol => "http"
-    }
-}

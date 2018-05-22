@@ -1,32 +1,27 @@
-mysql-neutron-database:
+neutron-database:
   mysql_database.present:
-    - name: {{ salt['pillar.get']('neutron:MYSQL_NEUTRON_DBNAME','neutron') }} 
+    - name: 'neutron'
     - connection_user: root
-    - connection_pass: ''
+    - connection_pass: 'openstack'
 
 {% for host in ['localhost','%'] %}
 mysql-neutron-{{ host }}-grants:
   mysql_user.present:
-    - name: {{ salt['pillar.get']('neutron:MYSQL_NEUTRON_USER','neutron') }}
+    - name: 'neutron'
     - host: '{{ host }}'
-    - password: "{{ salt['pillar.get']('neutron:MYSQL_NEUTRON_PASS','neutron') }}"
+    - password: "{{ salt['pillar.get']('public_password') }}"
     - connection_user: root
-    - connection_pass: ''
+    - connection_pass: 'openstack'
     - require:
-      - mysql_database: {{ salt['pillar.get']('neutron:MYSQL_NEUTRON_DBNAME','neutron') }}
+      - mysql_database: neutron-database
   mysql_grants.present:
     - grant: all privileges
-    - database: {{ salt['pillar.get']('neutron:MYSQL_NEUTRON_DBNAME','neutron') }}.*
-    - user: {{ salt['pillar.get']('neutron:MYSQL_NEUTRON_USER','neutron') }}
+    - database: neutron.*
+    - user: neutron
     - host: '{{ host }}'
+    - connection_user: root
+    - connection_pass: 'openstack'
     - require:
-      - mysql_database: {{ salt['pillar.get']('neutron:MYSQL_NEUTRON_DBNAME','neutron') }}
-      - mysql_user: {{ salt['pillar.get']('neutron:MYSQL_NEUTRON_USER','neutron') }}
+      - mysql_database: neutron-database
+      - mysql_user: mysql-neutron-{{ host }}-grants
 {% endfor %}
-
-neutron-table-sync:
-  cmd.run:
-    - name: /usr/bin/neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade juno 
-    - require:
-      - mysql_grants: mysql-neutron-localhost-grants
-      - mysql_grants: mysql-neutron-%-grants

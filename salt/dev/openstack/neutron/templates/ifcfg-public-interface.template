@@ -1,5 +1,0 @@
-DEVICE={{PUBLIC_INTERFACE}}
-BOOTPROTO="static"
-NM_CONTROLLED="no"
-ONBOOT="yes"
-ETHTOOL_OPTS="-K ${DEVICE}  tso off lro off gro off gso off"
