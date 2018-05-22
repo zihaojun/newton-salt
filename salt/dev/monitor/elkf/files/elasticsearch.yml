@@ -1,0 +1,8 @@
+network.host: {{ CONTROLLER_IP }}
+http.port: 9200
+cluster.name: es_cluster
+node.name: {{ CONTROLLER }}
+discovery.zen.ping.unicast.hosts: ["{{ CONTROLLER_IP }}"]
+discovery.zen.minimum_master_nodes: 1
+http.cors.enabled: true
+http.cors.allow-origin: "*"

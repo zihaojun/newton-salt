@@ -1,0 +1,10 @@
+[Unit]
+Description=prometheus
+After=network.target
+[Service]
+Type=simple
+User=root
+ExecStart=/home/prometheus/prometheus --config.file=/home/prometheus/prometheus.yml --storage.tsdb.path=/var/lib/prometheus
+Restart=on-failure
+[Install]
+WantedBy=multi-user.target
